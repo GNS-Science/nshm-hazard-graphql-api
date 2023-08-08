@@ -1,0 +1,143 @@
+service: nzshm22-hazard-api
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-s3-local
+  - serverless-plugin-warmup
+package:
+  individually: false
+  patterns:
+    - '!__pycache__/**'
+    - '!.git/**'
+    - '!.github/**'
+    - '!.pytest_cache/**'
+    - '!.mypy_cache/**'
+    - '!.tox/**'
+    - '!dist/**'
+    - '!docs/**'
+    - '!/**'
+    - '!node_modules/**'
+    - '!package.json'
+    - '!package-log.json'
+    - '!tests/**'
+    - '!site/**'
+    - nshm_hazard_graphql_api/**
+
+custom:
+  #serverless-wsgi settings
+  wsgi:
+    app: nshm_hazard_graphql_api.nshm_hazard_graphql_api.app
+    packRequirements: false
+    pythonBin: python3
+
+  #serverless-python-requirements settings
+  pythonRequirements:
+    # dockerizePip: non-linux
+    slim: true
+    slimPatterns:
+      - '**/*.egg-info*'
+    noDeploy:
+      - boto3
+      - botocore
+      - fiona
+      - Fiona.libs
+
+  #serverless-s3-local settings
+  s3:
+    host: localhost
+    directory: /tmp
+
+  # Lambda warmer see https://www.serverless.com/plugins/serverless-plugin-warmup
+  warmup:
+    littleWarmer:
+      enabled: true
+      events:
+        - schedule: rate(5 minutes)
+      concurrency: 1
+
+# DRY constants: define all compound/generated names in one place
+# Override args are: .. defaults:
+# --app_acroym          signed-uploader
+# --s3_bucket           self:custom.app_acronym
+# --s3_key_base         self:custom.stage
+# --region              us-east-1
+# --stage               test
+# --deletion_policy     delete
+
+  app_acronym: ${opt:acronym, self:service}
+  default_stage: local
+  stage: ${opt:stage, self:custom.default_stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
+  region: ${opt:region, self:provider.region}
+  deletion_policy: Delete
+  # presigned URL TTL
+  url_default_ttl: 60
+
+  # Default to using app_acronym as bucket name
+  s3_bucket: ${opt:s3_bucket, self:custom.app_acronym}-${self:custom.stage}
+  # default to using ${stage} as key base path, keeps stages from namespace collisions
+  s3_bucket_arn: arn:aws:s3:::${self:custom.s3_bucket}
+  s3_role_resource: ${self:custom.s3_bucket_arn}
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  region: ap-southeast-2
+  apiGateway:
+    apiKeys:
+      - name: NSHM_HAZARDTempApiKey-${self:custom.stage}
+        description: Api key until we have an auth function # Optional
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+             - "cloudwatch:PutMetricData"
+          Resource: "*"
+        - Effect: Allow
+          Action:
+             - "dynamodb:Scan"
+             - "dynamodb:DescribeTable"
+             - "dynamodb:GetItem"
+             - "dynamodb:ConditionCheckItem"
+             - "dynamodb:Query"
+          Resource:
+             - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_HazardAggregation-PROD"
+             - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_GriddedHazard-PROD"
+
+functions:
+  app:
+    description: The graphql API of ${self:service}
+    handler: wsgi_handler.handler
+    memorySize: 2096 # optional, in MB, default is 1024
+    timeout: 20 # optional, in seconds, default is 6
+    events:
+      - http:
+          path: graphql
+          method: OPTIONS
+      - http:
+          path: graphql
+          method: POST
+          private: true
+      - http:
+          path: graphql
+          method: GET
+          private: true
+    environment:
+      STACK_NAME: ${self:custom.stack_name}
+      REGION: ${self:custom.region}
+      URL_DEFAULT_TTL: ${self:custom.url_default_ttl}
+      DEPLOYMENT_STAGE: ${self:custom.stage}
+      ENABLE_METRICS: ${env:ENABLE_METRICS, 0}
+      COLOR_SCALE_NORMALISATION: ${env:COLOR_SCALE_NORMALISATION, 'LIN'}
+      NZSHM22_HAZARD_STORE_STAGE: PROD
+      NZSHM22_HAZARD_STORE_REGION: ${self:custom.region}
+
+    warmup:
+      littleWarmer:
+        enabled:
+          - test
+          - prod
