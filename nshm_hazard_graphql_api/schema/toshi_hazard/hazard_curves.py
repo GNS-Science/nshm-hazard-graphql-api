@@ -3,6 +3,7 @@
 import logging
 from datetime import datetime as dt
 from typing import Iterable, Iterator
+
 from nzshm_common.location import CodedLocation, location
 from toshi_hazard_store import query_v3
 

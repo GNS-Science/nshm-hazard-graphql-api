@@ -16,7 +16,7 @@ Hopefully logging output from this modulw will aid in diagnosing such issues in 
 import importlib.util
 import logging
 import sys
-from typing import List
+from typing import List, Union
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ def check_import(name: str):
         log.warning('unable to find loader for spec %s' % name)
 
 
-def log_library_info(lib_names: List[str] | None = None):
+def log_library_info(lib_names: Union[List[str], None] = None):
     lib_names = lib_names or ['botocore', 'boto3']
     for name in lib_names:
         check_import(name)
