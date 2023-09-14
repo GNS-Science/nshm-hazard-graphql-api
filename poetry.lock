@@ -12,21 +12,6 @@ files = [
 ]
 
 [[package]]
-name = "astunparse"
-version = "1.6.3"
-description = "An AST unparser for Python"
-optional = false
-python-versions = "*"
-files = [
-    {file = "astunparse-1.6.3-py2.py3-none-any.whl", hash = "sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8"},
-    {file = "astunparse-1.6.3.tar.gz", hash = "sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872"},
-]
-
-[package.dependencies]
-six = ">=1.6.1,<2.0"
-wheel = ">=0.23.0,<1.0"
-
-[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -1145,7 +1130,6 @@ files = [
 
 [package.dependencies]
 importlib-metadata = {version = ">=4.11.4", markers = "python_version < \"3.12\""}
-importlib-resources = {version = "*", markers = "python_version < \"3.9\""}
 "jaraco.classes" = "*"
 jeepney = {version = ">=0.4.2", markers = "sys_platform == \"linux\""}
 pywin32-ctypes = {version = ">=0.2.0", markers = "sys_platform == \"win32\""}
@@ -2214,9 +2198,6 @@ files = [
     {file = "pytkdocs-0.16.1.tar.gz", hash = "sha256:e2ccf6dfe9dbbceb09818673f040f1a7c32ed0bffb2d709b06be6453c4026045"},
 ]
 
-[package.dependencies]
-astunparse = {version = ">=1.6", markers = "python_version < \"3.9\""}
-
 [package.extras]
 numpy-style = ["docstring_parser (>=0.7)"]
 
@@ -2553,21 +2534,22 @@ files = [
 
 [[package]]
 name = "toshi-hazard-store"
-version = "0.7.2"
+version = "0.7.5"
 description = "Library for saving and retrieving NZHSM openquake hazard results with convenience (uses AWS Dynamodb)."
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.9,<3.13"
 files = [
-    {file = "toshi_hazard_store-0.7.2-py3-none-any.whl", hash = "sha256:512b98917a1b86b4ef7a7aaf2f93f14d345a5a38473d1643bbf9ee24cb0bc2ad"},
-    {file = "toshi_hazard_store-0.7.2.tar.gz", hash = "sha256:2b0056565321cbb66cadc22b393c5f767dc578edab75bdb60d01999f3f6c96c3"},
+    {file = "toshi_hazard_store-0.7.5-py3-none-any.whl", hash = "sha256:f69e25b10cf65c29902ac5ce94636fa4f0f7be7c52a2cf51671f62da5d2bdeb9"},
+    {file = "toshi_hazard_store-0.7.5.tar.gz", hash = "sha256:eb372622dc284e7697ed5cae5cf42fbb9d26f577f9757023c6dfcab7631b06b8"},
 ]
 
 [package.dependencies]
-numpy = ">=1.23.1,<2.0.0"
+numpy = "<1.25"
 nzshm-common = ">=0.6.0,<0.7.0"
 pandas = ">=1.4.3,<2.0.0"
-pynamodb = ">=5.2.1,<6.0.0"
+pynamodb = ">=5.5.0,<6.0.0"
 pynamodb-attributes = ">=0.3.2,<0.4.0"
+urllib3 = "<2"
 
 [package.extras]
 openquake = ["openquake-engine (>=3.16,<4.0)"]
@@ -2779,20 +2761,6 @@ MarkupSafe = ">=2.1.1"
 watchdog = ["watchdog (>=2.3)"]
 
 [[package]]
-name = "wheel"
-version = "0.41.1"
-description = "A built-package format for Python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "wheel-0.41.1-py3-none-any.whl", hash = "sha256:473219bd4cbedc62cea0cb309089b593e47c15c4a2531015f94e4e3b9a0f6981"},
-    {file = "wheel-0.41.1.tar.gz", hash = "sha256:12b911f083e876e10c595779709f8a88a59f45aacc646492a67fe9ef796c1b47"},
-]
-
-[package.extras]
-test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
-
-[[package]]
 name = "xmltodict"
 version = "0.13.0"
 description = "Makes working with XML feel like you are working with JSON"
@@ -2825,5 +2793,5 @@ test = []
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.8,<4.0"
-content-hash = "547677205836c24d3f44a8fdf9688b76455f53d143bf5f4118fbc1de89b53ce7"
+python-versions = ">=3.9,<3.13"
+content-hash = "5e4ffbd044a0bbc34e408d9034052ae1b90c8d6816e5916904c43adbdda19203"
