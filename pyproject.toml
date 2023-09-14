@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "nshm-hazard-graphql-api"
-version = "0.1.0"
+version = "0.1.1"
 homepage = "https://github.com/gns-science/nshm-hazard-graphql-api"
 description = "A Grapql API for NZHSM Hazard.."
 authors = ["GNS Science New Zealand <nshm@gns.cri.nz>"]
