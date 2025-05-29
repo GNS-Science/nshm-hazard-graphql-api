@@ -7,7 +7,9 @@ import os
 import yaml
 from flask import Flask
 from flask_cors import CORS
-from flask_graphql import GraphQLView
+
+# from flask_graphql import GraphQLView
+from graphql_server.flask import GraphQLView
 
 from nshm_hazard_graphql_api.library_version_check import log_library_info
 from nshm_hazard_graphql_api.schema import schema_root

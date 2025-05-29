@@ -1,3 +1,7 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+# org: chrisbc
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+# app: nshm-hazard-graphql-api
 service: nzshm22-hazard-api
 
 plugins:
@@ -33,7 +37,7 @@ custom:
 
   #serverless-python-requirements settings
   pythonRequirements:
-    # dockerizePip: non-linux
+    dockerizePip: true #non-linux
     slim: true
     slimPatterns:
       - '**/*.egg-info*'
@@ -42,6 +46,11 @@ custom:
       - botocore
       - fiona
       - Fiona.libs
+      # - PIL
+      # - matplotlib
+      # - werkzeug
+      # - pyogrio
+      - pyarrow
 
   #serverless-s3-local settings
   s3:
@@ -82,7 +91,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.11
   stage: ${opt:stage, 'dev'}
   region: ap-southeast-2
   apiGateway:
