@@ -1,14 +1,8 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
-# org: chrisbc
-# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
-# app: nshm-hazard-graphql-api
 service: nzshm22-hazard-graphql-api
 configValidationMode: error
 
 plugins:
-  # - serverless-python-requirements
-  # - serverless-wsgi
-  # - serverless-s3-local
+  - serverless-wsgi
   - serverless-plugin-warmup
 package:
   individually: false
@@ -30,29 +24,11 @@ package:
     - nshm_hazard_graphql_api/**
 
 custom:
-  #serverless-wsgi settings
+  #serverless-wsgi settings, needed for local testing with `serverless wsgi serve`
   wsgi:
     app: nshm_hazard_graphql_api.nshm_hazard_graphql_api.app
     packRequirements: false
     pythonBin: python3
-
-  # #serverless-python-requirements settings
-  # pythonRequirements:
-  #   dockerizePip: true #non-linux
-  #   slim: true
-  #   slimPatterns:
-  #     - '**/*.egg-info*'
-  #   noDeploy:
-  #     - boto3
-  #     - botocore
-  #     - fiona
-  #     - Fiona.libs
-  #     # - PIL
-  #     # - matplotlib
-  #     # - werkzeug
-  #     # - pyogrio
-  #     - pyarrow
-
   #serverless-s3-local settings
   s3:
     host: localhost
@@ -96,7 +72,7 @@ provider:
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
-      appimage:
+      app_image_0:
         path: "."
         file: Dockerfile
         buildArgs:
@@ -106,7 +82,7 @@ provider:
         platform: linux/amd64
 
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'} # ap-southeast-2
+  region: ${opt:region, 'us-east-1'}
   apiGateway:
     apiKeys:
       - name: ${self:custom.stack_name}-TempApiKey-${self:custom.stage}
@@ -133,14 +109,13 @@ provider:
 functions:
   app:
     image:
-      name: appimage
+      name: app_image_0
       command:
-        - nshm_hazard_graphql_api.app
+        - nshm_hazard_graphql_api.handler.handler
       entryPoint:
         - '/lambda-entrypoint.sh'
 
     description: The graphql API of ${self:service}
-    # handler: wsgi_handler.handler
     memorySize: 2096 # optional, in MB, default is 1024
     timeout: 20 # optional, in seconds, default is 6
     events:
