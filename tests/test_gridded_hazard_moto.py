@@ -3,12 +3,11 @@
 import unittest
 import itertools
 import random
-from moto import mock_dynamodb, mock_cloudwatch
+from moto import mock_dynamodb
 
 from graphene.test import Client
 
-with mock_cloudwatch():
-    from nshm_hazard_graphql_api.schema import schema_root
+from nshm_hazard_graphql_api.schema import schema_root
 
 from nzshm_common.grids import RegionGrid
 from toshi_hazard_store import model

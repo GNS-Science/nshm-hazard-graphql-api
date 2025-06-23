@@ -5,15 +5,13 @@ from datetime import datetime as dt
 from nzshm_common.grids import RegionGrid
 from nzshm_common.geometry.geometry import create_square_tile
 
-from moto import mock_cloudwatch
 from shapely.geometry import Polygon
 
-with mock_cloudwatch():
-    from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
-        CustomPolygon,
-        clip_tiles,
-        nz_simplified_polygons,
-    )
+from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
+    CustomPolygon,
+    clip_tiles,
+    nz_simplified_polygons,
+)
 
 GRID = 'WLG_0_01_nb_1_1'
 

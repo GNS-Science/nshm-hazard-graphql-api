@@ -16,7 +16,7 @@ class ServerlessMetricWriter:
         self._lambda_name = STACK_NAME
         self._metric_name = metric_name
         self._resolution = resolution  # 1=high, or 60
-        self._client = boto3.client('cloudwatch', region_name=REGION)
+        self._client = boto3.client('cloudwatch', region_name=REGION) if ENABLE_METRICS else None
 
     def put_duration(self, package, operation, duration):
 
@@ -42,3 +42,5 @@ class ServerlessMetricWriter:
         )
         if ENABLE_METRICS:
             self._client.put_metric_data(**rec)
+        else:
+            log.info(f"{self._metric_name} `{package}:{operation}` value: {duration} milliseconds.")

@@ -1,18 +1,21 @@
 """Build Hazard curves from the old dynamoDB models."""
 
 import logging
-from datetime import datetime as dt
 from typing import Iterable, Iterator
 
 from nzshm_common.location import CodedLocation, location
 from toshi_hazard_store import query_v3
 
 from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
+from nshm_hazard_graphql_api.config import DATASET_AGGR_ENABLED
 
+from . import datasets
 from .hazard_schema import GriddedLocation, ToshiHazardCurve, ToshiHazardCurveResult, ToshiHazardResult
 
 log = logging.getLogger(__name__)
 db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
+
+DATASET_VS30 = [400, 1500]  # temporary measure while only some vs3 are in dataset
 
 
 def match_named_location_coord_code(location_code: str) -> CodedLocation:
@@ -71,7 +74,7 @@ def normalise_locations(locations: Iterable[str], resolution: float = 0.01) -> I
 
 def hazard_curves(kwargs):
     """Run query against dynamoDB usign v3 query."""
-    t0 = dt.utcnow()
+    log.debug(">> hazard_curves() with kwargs {kwargs}")
 
     def get_curve(obj):
         levels, values = [], []
@@ -106,13 +109,26 @@ def hazard_curves(kwargs):
         for loc in gridded_locations
     ]
 
-    query_res = query_v3.get_hazard_curves(
-        coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
+    # print(coded_locations)
+
+    log.info(
+        f"pre query DATASET_AGGR_ENABLED: {DATASET_AGGR_ENABLED} {set(DATASET_VS30).issuperset(set(kwargs['vs30s']))}"
+        f" {set(DATASET_VS30)} {set(kwargs['vs30s'])}"
     )
+    if DATASET_AGGR_ENABLED and set(DATASET_VS30).issuperset(set(kwargs['vs30s'])):
+        log.info('DATASET QUERY')
+        query_res = datasets.get_hazard_curves(
+            coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
+        )
+    else:
+        # old dynamodB query
+        log.info('DYNAMODB QUERY')
+        query_res = query_v3.get_hazard_curves(
+            coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
+        )
 
     result = ToshiHazardCurveResult(
         ok=True, locations=gridded_locations, curves=build_response_from_query(query_res, kwargs['resolution'])
     )
-
-    db_metrics.put_duration(__name__, 'hazard_curves', dt.utcnow() - t0)
+    # db_metrics.put_duration(__name__, 'hazard_curves', dt.utcnow() - t0)
     return result
