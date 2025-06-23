@@ -67,22 +67,34 @@ IMT_44_LVLS = [
 
 @dataclass
 class IMTValue:
-    lvl: float
-    val: float
+    """Represents an intensity measure type (IMT) value.
+
+    Attributes:
+        lvl: The level of the IMT value.
+        val: The value of the IMT at that level.
+    """
+
+    lvl: float  # noqa: F821
+    val: float  # noqa: F821
 
 
 @dataclass
 class AggregatedHazard:
     """
-    For Table schema:
-            ("compatible_calc_id", pyarrow.string()),  # for hazard-calc equivalence, for PSHA engines interoperability
-            ("hazard_model_id", pyarrow.string()),  # the model that these curves represent.
-            ("nloc_001", pyarrow.string()),  # the location string to three places e.g. "-38.330~17.550"
-            ("nloc_0", pyarrow.string()),  # the location string to zero places e.g.  "-38.0~17.0" (used for partioning)
-            ('imt', pyarrow.string()),  # the imt label e.g. 'PGA', 'SA(5.0)'
-            ('vs30', vs30_type),  # the VS30 integer
-            ('aggr', pyarrow.string()),  # the the aggregation type
-            ("values", values_type),  # a list of the 44 IMTL values
+    Represents an aggregated hazard dataset.
+
+    Attributes:
+        compatible_calc_id (str): the ID of a compatible calculation for PSHA engines interoperability.
+        hazard_model_id (str): the model that these curves represent.
+        nloc_001 (str): the location string to three places e.g. "-38.330~17.550".
+        nloc_0 (str): the location string to zero places e.g.  "-38.0~17.0" (used for partitioning).
+        imt (str): the intensity measure type label e.g. 'PGA', 'SA(5.0)'.
+        vs30 (int): the VS30 integer.
+        agg (str): the aggregation type.
+        values (list[Union[float, IMTValue]]): a list of 44 IMTL values.
+
+    Notes:
+        This class is designed to match the table schema for aggregated hazard datasets.
     """
 
     compatable_calc_id: str
@@ -92,27 +104,59 @@ class AggregatedHazard:
     imt: str
     vs30: int
     agg: str
-    values: list[Union[float, IMTValue]]
+    values: list[Union[float, 'IMTValue']]
 
     def to_imt_values(self):
+        """
+        Converts the IMTL values in this object's `values` attribute from a list of floats to a list of `IMTValue`
+        objects.
+        Returns:
+            AggregatedHazard: this object itself.
+        """
         new_values = zip(IMT_44_LVLS, self.values)
         self.values = [IMTValue(*x) for x in new_values]
         return self
 
 
-@lru_cache
-def get_dataset():
-    """Cache the dataset"""
-    t0 = dt.datetime.now()
-    dataset = ds.dataset(DATASET_AGGR_URI, partitioning='hive', format='parquet', schema=get_hazard_aggregate_schema())
-    t1 = dt.datetime.now()
-    log.info(f"Opened dataset `{DATASET_AGGR_URI}` in {(t1 -t0).total_seconds()} seconds.")
+@lru_cache(maxsize=None)
+def get_dataset() -> ds.Dataset:
+    """
+    Cache the dataset.
+
+    Returns:
+      A pyarrow.dataset.Dataset object.
+    """
+    start_time = dt.datetime.now()
+    try:
+        dataset = ds.dataset(
+            DATASET_AGGR_URI, partitioning='hive', format='parquet', schema=get_hazard_aggregate_schema()
+        )
+        log.info(f"Opened dataset `{DATASET_AGGR_URI}` in {dt.datetime.now() - start_time}.")
+    except Exception as e:
+        raise RuntimeError(f"Failed to open dataset {DATASET_AGGR_URI}: {e}")
     return dataset
 
 
 def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
+    """
+    Retrieves aggregated hazard curves from the dataset.
+
+    Args:
+      location_codes (list): List of location codes.
+      vs30s (list): List of VS30 values.
+      hazard_model (list): List of hazard model IDs.
+      imts (list): List of intensity measure types (e.g. 'PGA', 'SA(5.0)').
+      aggs (list): List of aggregation types.
+
+    Yields:
+      AggregatedHazard: An object containing the aggregated hazard curve data.
+
+    Note:
+      This method uses caching to improve performance.
+    """
     log.debug('> get_hazard_curves()')
     t0 = dt.datetime.now()
+
     dataset = get_dataset()
 
     filter = (
