@@ -6,11 +6,14 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Union
 
+from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 from toshi_hazard_store.model.pyarrow.dataset_schema import get_hazard_aggregate_schema
 
 from nshm_hazard_graphql_api.config import DATASET_AGGR_URI
+
+db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 
 log = logging.getLogger(__name__)
 
@@ -108,10 +111,10 @@ def get_dataset():
 
 
 def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
+    log.debug('> get_hazard_curves()')
     t0 = dt.datetime.now()
     dataset = get_dataset()
 
-    # location_codes = [f'"{x.code}"' for x in coded_locations]
     filter = (
         (pc.field('aggr').isin(aggs))
         & (pc.field("nloc_001").isin(location_codes))
@@ -120,22 +123,19 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
         & (pc.field('hazard_model_id').isin(hazard_model))
     )
 
-    print(filter)
-
     table = dataset.to_table(filter=filter)
-    print(table.schema)
+    log.debug(f"schema {table.schema}")
     count = 0
     for batch in table.to_batches():
-        # print(batch.columns)
         for row in zip(*batch.columns):
             count += 1
-
-            deets = (x.as_py() for x in row)
-            obj = AggregatedHazard(*deets).to_imt_values()
-            print(obj)
-            # assert 0, "BOMB"
-            assert obj.vs30 in vs30s, f"vs30 {obj.vs30} not in {vs30s}"
+            item = (x.as_py() for x in row)
+            obj = AggregatedHazard(*item).to_imt_values()
+            if not obj.vs30 in vs30s:
+                raise RuntimeError(f"vs30 {obj.vs30} not in {vs30s}. Is schema correct?")
             yield obj
 
     t1 = dt.datetime.now()
     log.info(f"Executed dataset query for {count} curves in {(t1 -t0).total_seconds()} seconds.")
+    delta = t1 - t0
+    db_metrics.put_duration(__name__, 'hazard_curves', delta)    

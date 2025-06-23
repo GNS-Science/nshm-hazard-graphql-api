@@ -1,6 +1,7 @@
 """Build Hazard curves from the old dynamoDB models."""
 
 import logging
+import datetime as dt
 from typing import Iterable, Iterator
 
 from nzshm_common.location import CodedLocation, location
@@ -75,6 +76,7 @@ def normalise_locations(locations: Iterable[str], resolution: float = 0.01) -> I
 def hazard_curves(kwargs):
     """Run query against dynamoDB usign v3 query."""
     log.debug(">> hazard_curves() with kwargs {kwargs}")
+    tstart = dt.datetime.now()
 
     def get_curve(obj):
         levels, values = [], []
@@ -130,5 +132,5 @@ def hazard_curves(kwargs):
     result = ToshiHazardCurveResult(
         ok=True, locations=gridded_locations, curves=build_response_from_query(query_res, kwargs['resolution'])
     )
-    # db_metrics.put_duration(__name__, 'hazard_curves', dt.utcnow() - t0)
+
     return result
