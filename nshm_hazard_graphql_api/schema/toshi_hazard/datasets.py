@@ -6,11 +6,11 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Union
 
-from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 from toshi_hazard_store.model.pyarrow.dataset_schema import get_hazard_aggregate_schema
 
+from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
 from nshm_hazard_graphql_api.config import DATASET_AGGR_URI
 
 db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
@@ -131,11 +131,11 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
             count += 1
             item = (x.as_py() for x in row)
             obj = AggregatedHazard(*item).to_imt_values()
-            if not obj.vs30 in vs30s:
+            if obj.vs30 not in vs30s:
                 raise RuntimeError(f"vs30 {obj.vs30} not in {vs30s}. Is schema correct?")
             yield obj
 
     t1 = dt.datetime.now()
     log.info(f"Executed dataset query for {count} curves in {(t1 -t0).total_seconds()} seconds.")
     delta = t1 - t0
-    db_metrics.put_duration(__name__, 'hazard_curves', delta)    
+    db_metrics.put_duration(__name__, 'hazard_curves', delta)

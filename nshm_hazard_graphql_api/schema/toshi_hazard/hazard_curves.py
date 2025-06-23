@@ -1,7 +1,6 @@
-"""Build Hazard curves from the old dynamoDB models."""
+"""Build Hazard curves from either dynamoDB models or from new dataset."""
 
 import logging
-import datetime as dt
 from typing import Iterable, Iterator
 
 from nzshm_common.location import CodedLocation, location
@@ -76,7 +75,6 @@ def normalise_locations(locations: Iterable[str], resolution: float = 0.01) -> I
 def hazard_curves(kwargs):
     """Run query against dynamoDB usign v3 query."""
     log.debug(">> hazard_curves() with kwargs {kwargs}")
-    tstart = dt.datetime.now()
 
     def get_curve(obj):
         levels, values = [], []
@@ -110,8 +108,6 @@ def hazard_curves(kwargs):
         CodedLocation(lat=loc.lat, lon=loc.lon, resolution=loc.resolution).resample(0.001).code
         for loc in gridded_locations
     ]
-
-    # print(coded_locations)
 
     log.info(
         f"pre query DATASET_AGGR_ENABLED: {DATASET_AGGR_ENABLED} {set(DATASET_VS30).issuperset(set(kwargs['vs30s']))}"
