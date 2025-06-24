@@ -15,5 +15,5 @@ WORKDIR ${FUNCTION_ROOT_DIR}
 RUN pip3 install -r requirements.txt
 
 # lambda entry point
-# CMD ["nshm_hazard_graphql_api.nshm_hazard_graphql_api.app"]
-# ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["nshm_hazard_graphql_api.nshm_hazard_graphql_api.app"]
+ENTRYPOINT ["/bin/bash", "-c"]

@@ -105,6 +105,55 @@ provider:
           Resource:
              - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_HazardAggregation-PROD"
              - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_GriddedHazard-PROD"
+        - Effect: Allow
+          Action:
+            # - s3:*
+            - "s3:GetLifecycleConfiguration"
+            - "s3:GetBucketTagging"
+            - "s3:GetInventoryConfiguration"
+            - "s3:GetObjectVersionTagging"
+            - "s3:ListBucketVersions"
+            - "s3:GetBucketLogging"
+            # - "s3:ReplicateTags"
+            - "s3:ListBucket"
+            - "s3:GetBucketPolicy"
+            - "s3:GetObjectVersionTorrent"
+            - "s3:GetObjectAcl"
+            - "s3:GetEncryptionConfiguration"
+            - "s3:GetBucketObjectLockConfiguration"
+            - "s3:GetIntelligentTieringConfiguration"
+            # - "s3:PutBucketTagging"
+            - "s3:GetBucketRequestPayment"
+            - "s3:GetObjectVersionAcl"
+            - "s3:GetObjectTagging"
+            - "s3:GetMetricsConfiguration"
+            - "s3:GetBucketOwnershipControls"
+            # - "s3:PutObjectTagging"
+            # - "s3:DeleteObject"
+            # - "s3:PutObjectAcl"
+            - "s3:GetBucketPublicAccessBlock"
+            - "s3:GetBucketPolicyStatus"
+            - "s3:ListBucketMultipartUploads"
+            - "s3:GetObjectRetention"
+            - "s3:GetBucketWebsite"
+            # - "s3:PutObjectVersionTagging"
+            - "s3:GetBucketVersioning"
+            - "s3:GetBucketAcl"
+            - "s3:GetObjectLegalHold"
+            - "s3:GetBucketNotification"
+            - "s3:GetReplicationConfiguration"
+            - "s3:ListMultipartUploadParts"
+            # - "s3:PutObject"
+            - "s3:GetObject"
+            - "s3:GetObjectTorrent"
+            # - "s3:PutObjectVersionAcl"
+            - "s3:GetBucketCORS"
+            - "s3:GetObjectVersionForReplication"
+            - "s3:GetBucketLocation"
+            - "s3:GetObjectVersion"
+          Resource:
+            - arn:aws:s3:::ths-dataset-prod
+            - arn:aws:s3:::ths-dataset-prod/*
 
 functions:
   app:
@@ -116,7 +165,7 @@ functions:
         - '/lambda-entrypoint.sh'
 
     description: The graphql API of ${self:service}
-    memorySize: 2096 # optional, in MB, default is 1024
+    memorySize: 4096 # optional, in MB, default is 1024
     timeout: 20 # optional, in seconds, default is 6
     events:
       - http:
@@ -135,10 +184,13 @@ functions:
       REGION: ${self:custom.region}
       URL_DEFAULT_TTL: ${self:custom.url_default_ttl}
       DEPLOYMENT_STAGE: ${self:custom.stage}
-      ENABLE_METRICS: ${env:ENABLE_METRICS, 0}
+      ENABLE_METRICS: ${env:ENABLE_METRICS, 'True'}
       COLOR_SCALE_NORMALISATION: ${env:COLOR_SCALE_NORMALISATION, 'LIN'}
       NZSHM22_HAZARD_STORE_STAGE: PROD
       NZSHM22_HAZARD_STORE_REGION: ${self:custom.region}
+      DATASET_AGGR_ENABLED: ${env:DATASET_AGGR_ENABLED, 'True'}
+      DATASET_AGGR_URI: ${env:DATASET_AGGR_URI, 's3://ths-dataset-prod/NZSHM22_AGG'}
+      MPLCONFIGDIR: /tmp
 
     warmup:
       littleWarmer:

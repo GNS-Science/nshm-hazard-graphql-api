@@ -153,6 +153,8 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
 
     Note:
       This method uses caching to improve performance.
+
+      https://arrow.apache.org/docs/python/parquet.html#reading-and-writing-the-apache-parquet-format
     """
     log.debug('> get_hazard_curves()')
     t0 = dt.datetime.now()
@@ -168,7 +170,10 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
     )
 
     table = dataset.to_table(filter=filter)
+    t1 = dt.datetime.now()
+    log.debug(f"to_table for filter took {(t1 -t0).total_seconds()} seconds.")
     log.debug(f"schema {table.schema}")
+
     count = 0
     for batch in table.to_batches():
         for row in zip(*batch.columns):
