@@ -1,9 +1,8 @@
-service: nzshm22-hazard-api
+service: nzshm22-hazard-graphql-api
+configValidationMode: error
 
 plugins:
-  - serverless-python-requirements
   - serverless-wsgi
-  - serverless-s3-local
   - serverless-plugin-warmup
 package:
   individually: false
@@ -25,24 +24,11 @@ package:
     - nshm_hazard_graphql_api/**
 
 custom:
-  #serverless-wsgi settings
+  #serverless-wsgi settings, needed for local testing with `serverless wsgi serve`
   wsgi:
     app: nshm_hazard_graphql_api.nshm_hazard_graphql_api.app
     packRequirements: false
     pythonBin: python3
-
-  #serverless-python-requirements settings
-  pythonRequirements:
-    # dockerizePip: non-linux
-    slim: true
-    slimPatterns:
-      - '**/*.egg-info*'
-    noDeploy:
-      - boto3
-      - botocore
-      - fiona
-      - Fiona.libs
-
   #serverless-s3-local settings
   s3:
     host: localhost
@@ -82,12 +68,24 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.11
+  ecr:
+    # In this section you can define images that will be built locally and uploaded to ECR
+    images:
+      app_image_0:
+        path: "."
+        file: Dockerfile
+        buildArgs:
+          STAGE: ${self:custom.stage}
+        cacheFrom:
+          # - my-image:latest
+        platform: linux/amd64
+
   stage: ${opt:stage, 'dev'}
-  region: ap-southeast-2
+  region: ${opt:region, 'us-east-1'}
   apiGateway:
     apiKeys:
-      - name: NSHM_HAZARDTempApiKey-${self:custom.stage}
+      - name: ${self:custom.stack_name}-TempApiKey-${self:custom.stage}
         description: Api key until we have an auth function # Optional
 
   iam:
@@ -107,12 +105,67 @@ provider:
           Resource:
              - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_HazardAggregation-PROD"
              - "arn:aws:dynamodb:ap-southeast-2:461564345538:table/THS_GriddedHazard-PROD"
+        - Effect: Allow
+          Action:
+            # - s3:*
+            - "s3:GetLifecycleConfiguration"
+            - "s3:GetBucketTagging"
+            - "s3:GetInventoryConfiguration"
+            - "s3:GetObjectVersionTagging"
+            - "s3:ListBucketVersions"
+            - "s3:GetBucketLogging"
+            # - "s3:ReplicateTags"
+            - "s3:ListBucket"
+            - "s3:GetBucketPolicy"
+            - "s3:GetObjectVersionTorrent"
+            - "s3:GetObjectAcl"
+            - "s3:GetEncryptionConfiguration"
+            - "s3:GetBucketObjectLockConfiguration"
+            - "s3:GetIntelligentTieringConfiguration"
+            # - "s3:PutBucketTagging"
+            - "s3:GetBucketRequestPayment"
+            - "s3:GetObjectVersionAcl"
+            - "s3:GetObjectTagging"
+            - "s3:GetMetricsConfiguration"
+            - "s3:GetBucketOwnershipControls"
+            # - "s3:PutObjectTagging"
+            # - "s3:DeleteObject"
+            # - "s3:PutObjectAcl"
+            - "s3:GetBucketPublicAccessBlock"
+            - "s3:GetBucketPolicyStatus"
+            - "s3:ListBucketMultipartUploads"
+            - "s3:GetObjectRetention"
+            - "s3:GetBucketWebsite"
+            # - "s3:PutObjectVersionTagging"
+            - "s3:GetBucketVersioning"
+            - "s3:GetBucketAcl"
+            - "s3:GetObjectLegalHold"
+            - "s3:GetBucketNotification"
+            - "s3:GetReplicationConfiguration"
+            - "s3:ListMultipartUploadParts"
+            # - "s3:PutObject"
+            - "s3:GetObject"
+            - "s3:GetObjectTorrent"
+            # - "s3:PutObjectVersionAcl"
+            - "s3:GetBucketCORS"
+            - "s3:GetObjectVersionForReplication"
+            - "s3:GetBucketLocation"
+            - "s3:GetObjectVersion"
+          Resource:
+            - arn:aws:s3:::ths-dataset-prod
+            - arn:aws:s3:::ths-dataset-prod/*
 
 functions:
   app:
+    image:
+      name: app_image_0
+      command:
+        - nshm_hazard_graphql_api.handler.handler
+      entryPoint:
+        - '/lambda-entrypoint.sh'
+
     description: The graphql API of ${self:service}
-    handler: wsgi_handler.handler
-    memorySize: 2096 # optional, in MB, default is 1024
+    memorySize: 4096 # optional, in MB, default is 1024
     timeout: 20 # optional, in seconds, default is 6
     events:
       - http:
@@ -131,10 +184,13 @@ functions:
       REGION: ${self:custom.region}
       URL_DEFAULT_TTL: ${self:custom.url_default_ttl}
       DEPLOYMENT_STAGE: ${self:custom.stage}
-      ENABLE_METRICS: ${env:ENABLE_METRICS, 0}
+      ENABLE_METRICS: ${env:ENABLE_METRICS, 'True'}
       COLOR_SCALE_NORMALISATION: ${env:COLOR_SCALE_NORMALISATION, 'LIN'}
       NZSHM22_HAZARD_STORE_STAGE: PROD
       NZSHM22_HAZARD_STORE_REGION: ${self:custom.region}
+      DATASET_AGGR_ENABLED: ${env:DATASET_AGGR_ENABLED, 'True'}
+      DATASET_AGGR_URI: ${env:DATASET_AGGR_URI, 's3://ths-dataset-prod/NZSHM22_AGG'}
+      MPLCONFIGDIR: /tmp
 
     warmup:
       littleWarmer:

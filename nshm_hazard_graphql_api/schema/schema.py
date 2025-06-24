@@ -72,7 +72,7 @@ class QueryRoot(graphene.ObjectType):
 
     def resolve_hazard_curves(root, info, **kwargs):
         log.info("resolve_hazard_curves kwargs %s" % kwargs)
-        return hazard_curves(kwargs)
+        return hazard_curves.hazard_curves(kwargs)
 
     def resolve_about(root, info, **args):
         return f"Hello World, I am nshm_hazard_graphql_api version: {nshm_hazard_graphql_api.__version__}"

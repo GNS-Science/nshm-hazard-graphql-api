@@ -13,7 +13,7 @@ with mock_cloudwatch():
     from nshm_hazard_graphql_api.schema import schema_root
 
 from nzshm_common.grids import RegionGrid
-from .test_gridded_hazard import build_hazard_aggregation_models
+from .test_gridded_hazard import build_hazard_gridded_models
 
 HAZARD_MODEL_ID = 'GRIDDED_THE_THIRD'
 vs30s = [500]
@@ -22,7 +22,7 @@ aggs = ['mean']
 
 
 def mock_query_response(*args, **kwargs):
-    models = list(build_hazard_aggregation_models(args, kwargs))
+    models = list(build_hazard_gridded_models(args, kwargs))
     for nulled in [1787, 3685, 3686, 3687, 3688]:
         models[0].grid_poes[nulled] = None
     return models

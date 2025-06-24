@@ -7,16 +7,14 @@ import json
 from unittest import mock
 
 from graphene.test import Client
-from moto import mock_cloudwatch
 import pytest
 
-with mock_cloudwatch():
-    from nshm_hazard_graphql_api.schema import schema_root
-    from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
-        # CustomPolygon,
-        clip_tiles,
-        nz_simplified_polygons,
-    )
+from nshm_hazard_graphql_api.schema import schema_root
+from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
+    # CustomPolygon,
+    clip_tiles,
+    nz_simplified_polygons,
+)
 
 from toshi_hazard_store import model
 from nzshm_common.grids import RegionGrid

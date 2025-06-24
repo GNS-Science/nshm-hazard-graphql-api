@@ -7,13 +7,16 @@ import json
 from unittest import mock
 
 from graphene.test import Client
-from moto import mock_cloudwatch
 
-with mock_cloudwatch():
-    from nshm_hazard_graphql_api.schema import schema_root
+# from moto import mock_cloudwatch
+
+# with mock_cloudwatch():
+from nshm_hazard_graphql_api.schema import schema_root
 
 from toshi_hazard_store import model
 from nzshm_common.grids import RegionGrid
+
+# import nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard
 
 # log = logging.getLogger()
 # logging.basicConfig(level=logging.DEBUG)
@@ -27,7 +30,7 @@ imts = ['PGA', 'SA(0.5)']
 aggs = ['mean', '0.10']
 
 
-def build_hazard_aggregation_models(*args, **kwargs):
+def build_hazard_gridded_models(*args, **kwargs):
     print('args', args)
     grid_id = args[1]['location_grid_id']
     grid = RegionGrid[grid_id].load()
@@ -50,14 +53,14 @@ def build_hazard_aggregation_models(*args, **kwargs):
         yield obj
 
 
-def mock_query_response(*args, **kwargs):
-    return list(build_hazard_aggregation_models(args, kwargs))
+def mock_gridded_query_response(*args, **kwargs):
+    return list(build_hazard_gridded_models(args, kwargs))
 
 
 # query.get_one_gridded_hazard
 @mock.patch(
     'nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard.cacheable_gridded_hazard_query',
-    side_effect=mock_query_response,
+    side_effect=mock_gridded_query_response,
 )
 class TestGriddedHazard(unittest.TestCase):
     def setUp(self):
@@ -297,3 +300,43 @@ class TestGriddedHazard(unittest.TestCase):
         # self.assertEqual(cscale['hexrgbs'][1], '#46ffb1') # too much random
         # self.assertEqual(cscale['hexrgbs'][-4], '#890000')
         self.assertEqual(cscale['hexrgbs'][-1], '#800000')
+
+
+class TestResolveArbitraryLocationToGridded:
+    def test_get_gridded_location_with_off_grid_location(self, graphql_client, locations):
+        """No mocking required."""
+
+        QUERY = """
+        query {
+            gridded_location (
+                lat: %s
+                lon: %s
+                resolution: %s
+                )
+            {
+                ok
+                location {
+                    lat
+                    lon
+                    code
+                    resolution
+                }
+            }
+        }
+        """ % (
+            locations[0].lat,
+            locations[0].lon,
+            0.1,
+        )
+
+        executed = graphql_client.execute(QUERY)
+        print(executed)
+        res = executed['data']['gridded_location']
+
+        assert res['ok'] is True
+
+        expected = locations[0].downsample(0.1)
+        assert res['location']['lon'] == expected.lon
+        assert res['location']['lat'] == expected.lat
+        assert res['location']['code'] == expected.code
+        assert res['location']['resolution'] == expected.resolution

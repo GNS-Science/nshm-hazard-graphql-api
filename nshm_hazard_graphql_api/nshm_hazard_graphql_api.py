@@ -7,7 +7,7 @@ import os
 import yaml
 from flask import Flask
 from flask_cors import CORS
-from flask_graphql import GraphQLView
+from graphql_server.flask import GraphQLView
 
 from nshm_hazard_graphql_api.library_version_check import log_library_info
 from nshm_hazard_graphql_api.schema import schema_root
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 TESTING = os.getenv('TESTING', False)
 if not TESTING:
     # because in testing, this screws up moto mocking
-    log_library_info(['botocore', 'boto3', 'fiona'])
+    log_library_info(['botocore', 'boto3'])
 
 
 def create_app():
@@ -48,11 +48,6 @@ def create_app():
     else:
         print('Warning, no logging config found, using basicConfig(INFO)')
         logging.basicConfig(level=logging.INFO)
-
-    logger.debug('DEBUG logging enabled')
-    logger.info('INFO logging enabled')
-    logger.warning('WARN logging enabled')
-    logger.error('ERROR logging enabled')
 
     return app
 
