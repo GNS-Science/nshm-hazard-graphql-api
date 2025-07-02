@@ -143,7 +143,7 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
     if DATASET_AGGR_ENABLED and set(DATASET_VS30).issuperset(set(kwargs['vs30s'])):
         log.info('DATASET QUERY')
         query_res = datasets.get_hazard_curves(
-            coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
+            coded_locations, kwargs['vs30s'], kwargs['hazard_model'], kwargs['imts'], aggs=kwargs['aggs']
         )
     else:
         # old dynamodB query

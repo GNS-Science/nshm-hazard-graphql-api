@@ -9,6 +9,7 @@ from typing import Union
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 from toshi_hazard_store.model.pyarrow.dataset_schema import get_hazard_aggregate_schema
+from toshi_hazard_store.query import datasets
 
 from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
 from nshm_hazard_graphql_api.config import DATASET_AGGR_URI
@@ -159,30 +160,35 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs):
     log.debug('> get_hazard_curves()')
     t0 = dt.datetime.now()
 
-    dataset = get_dataset()
+    # dataset = get_dataset()
 
-    filter = (
-        (pc.field('aggr').isin(aggs))
-        & (pc.field("nloc_001").isin(location_codes))
-        & (pc.field("imt").isin(imts))
-        & (pc.field("vs30").isin(vs30s))
-        & (pc.field('hazard_model_id').isin(hazard_model))
-    )
+    # filter = (
+    #     (pc.field('aggr').isin(aggs))
+    #     & (pc.field("nloc_001").isin(location_codes))
+    #     & (pc.field("imt").isin(imts))
+    #     & (pc.field("vs30").isin(vs30s))
+    #     & (pc.field('hazard_model_id').isin(hazard_model))
+    # )
 
-    table = dataset.to_table(filter=filter)
-    t1 = dt.datetime.now()
-    log.debug(f"to_table for filter took {(t1 -t0).total_seconds()} seconds.")
-    log.debug(f"schema {table.schema}")
+    # table = dataset.to_table(filter=filter)
+    # t1 = dt.datetime.now()
+    # log.debug(f"to_table for filter took {(t1 -t0).total_seconds()} seconds.")
+    # log.debug(f"schema {table.schema}")
+
+    # count = 0
+    # for batch in table.to_batches():
+    #     for row in zip(*batch.columns):
+    #         count += 1
+    #         item = (x.as_py() for x in row)
+    #         obj = AggregatedHazard(*item).to_imt_values()
+    #         if obj.vs30 not in vs30s:
+    #             raise RuntimeError(f"vs30 {obj.vs30} not in {vs30s}. Is schema correct?")
+    #         yield obj
 
     count = 0
-    for batch in table.to_batches():
-        for row in zip(*batch.columns):
-            count += 1
-            item = (x.as_py() for x in row)
-            obj = AggregatedHazard(*item).to_imt_values()
-            if obj.vs30 not in vs30s:
-                raise RuntimeError(f"vs30 {obj.vs30} not in {vs30s}. Is schema correct?")
-            yield obj
+    for obj in datasets.get_hazard_curves_2(location_codes, vs30s, hazard_model, imts, aggs):
+        count += 1
+        yield obj
 
     t1 = dt.datetime.now()
     log.info(f"Executed dataset query for {count} curves in {(t1 -t0).total_seconds()} seconds.")
