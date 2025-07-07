@@ -40,7 +40,7 @@ werkzeug = "^3.1.3"
 poetry-plugin-export = "^1.9.0"
 serverless-wsgi = "^3.0.5"
 python-dotenv = "^1.1.0"
-toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store", rev = "feature/77_hazard_query_and_migration"}
+toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store", rev = "spike/iceberg-backend"}
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.2.8"
@@ -75,6 +75,7 @@ moto = "^4.1.12"
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 mypy = "^1.4.1"
+gql = "^3.5.3"
 
 
 [tool.poetry.extras]

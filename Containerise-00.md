@@ -8,6 +8,8 @@ see https://www.serverless.com/blog/container-support-for-lambda
 
 ```
 chrisbc@MLX01 nshm-hazard-graphql-api % aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 461564345538.dkr.ecr.us-east-1.amazonaws.com
+
+chrisbc@MLX01 nshm-hazard-graphql-api % aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 461564345538.dkr.ecr.ap-southeast-2.amazonaws.com
 Login Succeeded
 ```
 
