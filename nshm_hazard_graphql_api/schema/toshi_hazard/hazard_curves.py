@@ -18,6 +18,7 @@ db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 
 DATASET_VS30 = [400, 1500]  # temporary measure while only some vs3 are in dataset
 
+
 @lru_cache
 def match_named_location_coord_code(location_code: str) -> Optional[GriddedLocation]:
     """Attempt to match a Named Location.
@@ -140,15 +141,24 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
         for loc in gridded_locations
     ]
 
-    log.info(       
+    log.info(
         f"pre query DATASET_AGGR_ENABLED: {DATASET_AGGR_ENABLED} {set(DATASET_VS30).issuperset(set(kwargs['vs30s']))}"
         f" {set(DATASET_VS30)} {set(kwargs['vs30s'])}"
         f" strategy: {query_strategy}"
     )
-    if query_strategy in ["d0", "d1", "d2"] and DATASET_AGGR_ENABLED and set(DATASET_VS30).issuperset(set(kwargs['vs30s'])):
+    if (
+        query_strategy in ["d0", "d1", "d2"]
+        and DATASET_AGGR_ENABLED
+        and set(DATASET_VS30).issuperset(set(kwargs['vs30s']))
+    ):
         log.info('DATASET QUERY')
         query_res = datasets.get_hazard_curves(
-            coded_locations, kwargs['vs30s'], kwargs['hazard_model'], kwargs['imts'], aggs=kwargs['aggs'], strategy=query_strategy
+            coded_locations,
+            kwargs['vs30s'],
+            kwargs['hazard_model'],
+            kwargs['imts'],
+            aggs=kwargs['aggs'],
+            strategy=query_strategy,
         )
     else:
         # old dynamodB query

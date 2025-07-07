@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Union
 
-import pyarrow.compute as pc
 import pyarrow.dataset as ds
 from toshi_hazard_store.model.pyarrow.dataset_schema import get_hazard_aggregate_schema
 from toshi_hazard_store.query import datasets as ths_datasets
@@ -138,7 +137,7 @@ def get_dataset() -> ds.Dataset:
     return dataset
 
 
-def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy:str):
+def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy: str):
     """
     Retrieves aggregated hazard curves from the dataset.
 
@@ -148,14 +147,10 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy:
       hazard_model (list): List of hazard model IDs.
       imts (list): List of intensity measure types (e.g. 'PGA', 'SA(5.0)').
       aggs (list): List of aggregation types.
+      strategy: which query strategy to use -  lambda likes `d2`.
 
     Yields:
       AggregatedHazard: An object containing the aggregated hazard curve data.
-
-    Note:
-      This method uses caching to improve performance.
-
-      https://arrow.apache.org/docs/python/parquet.html#reading-and-writing-the-apache-parquet-format
     """
     log.debug('> get_hazard_curves()')
     t0 = dt.datetime.now()
@@ -163,11 +158,11 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy:
     count = 0
 
     if strategy == "d2":
-        qfn =  ths_datasets.get_hazard_curves_by_vs30_nloc0
+        qfn = ths_datasets.get_hazard_curves_by_vs30_nloc0
     elif strategy == "d1":
-        qfn =  ths_datasets.get_hazard_curves_by_vs30
+        qfn = ths_datasets.get_hazard_curves_by_vs30
     else:
-        qfn =  ths_datasets.get_hazard_curves_naive
+        qfn = ths_datasets.get_hazard_curves_naive
 
     for obj in qfn(location_codes, vs30s, hazard_model, imts, aggs):
         count += 1

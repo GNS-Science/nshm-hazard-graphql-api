@@ -34,7 +34,6 @@ def json_hazard():
 
 @pytest.fixture()
 def hazagg_fixture_fn(json_hazard):
-
     def fn(hazard_model, imt, nloc_001, agg, vs30):
         curves = json_hazard['data']['hazard_curves']['curves']
         """A test helper function"""
@@ -54,6 +53,7 @@ def hazagg_fixture_fn(json_hazard):
 
     yield fn
 
+
 @pytest.fixture()
 def dataset_locations():
     yield [
@@ -66,6 +66,7 @@ def dataset_locations():
 # @pytest.mark.parametrize("vs30", [400, 1500])
 # @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
 # @pytest.mark.parametrize("aggr", ["0.005", "mean"])
+
 
 @pytest.mark.parametrize("vs30", [400, 1500])
 @pytest.mark.parametrize("strategy", ['d0', 'd1', 'd2'])
@@ -148,14 +149,11 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
     #     )
     #     assert res_value == pytest.approx(exp_value, abs=3e-8)
 
-    for idx, value in enumerate(res['curves'][0]['curve']['values'] ):
+    for idx, value in enumerate(res['curves'][0]['curve']['values']):
 
         exp_value = expected.values[idx].val
         # exp_level = expected.values[idx].lvl
 
-        print(
-            f"testing idx: {idx} res_value: {value}"
-            f" expected_value: {exp_value}. diff: {exp_value - value}"
-        )
+        print(f"testing idx: {idx} res_value: {value}" f" expected_value: {exp_value}. diff: {exp_value - value}")
         assert value == pytest.approx(exp_value, abs=7e5 - 8)
         # assert value.lvl == exp_level
