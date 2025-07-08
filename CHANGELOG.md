@@ -7,7 +7,7 @@
  - tests to determine best THS query strategy
 
 ### Changed
- - Container packaging (we zip) to support larger dependencies
+ - Container packaging to support larger dependencies
  - using toshi-hazard-store @1.1.2
 
 ## [0.1.1]
