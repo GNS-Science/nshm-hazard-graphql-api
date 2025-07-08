@@ -134,21 +134,8 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
     assert res['curves'][0]['imt'] == expected.imt
     assert res['curves'][0]['vs30'] == expected.vs30
     assert res['curves'][0]['agg'] == expected.agg
-    # assert res['curves'][0]['loc'] == expected.nloc_01
-
-    # assert res['curves'][0]['curve']['levels'] == expected.curve['levels']
 
     # # Check values from original DynamoDB table vs new aggregate pyarrow dataset.
-    # # note the value differences here (< 5e-9) are down to minor changes in THP processing.
-    # for idx, level in enumerate(res['curves'][0]['curve']['levels']):
-    #     res_value = res['curves'][0]['curve']['values'][idx]
-    #     exp_value = expected['data']['hazard_curves']['curves'][0]['curve']['values'][idx]
-    #     print(
-    #         f"testing idx: {idx} level: {level} res_value: {res_value}"
-    #         f" expected_value: {exp_value}. diff: {exp_value-res_value}"
-    #     )
-    #     assert res_value == pytest.approx(exp_value, abs=3e-8)
-
     for idx, value in enumerate(res['curves'][0]['curve']['values']):
 
         exp_value = expected.values[idx].val
