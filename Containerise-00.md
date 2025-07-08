@@ -2,8 +2,6 @@
 
 see https://www.serverless.com/blog/container-support-for-lambda
 
-
-
 ## login to aws ecr
 
 ```
