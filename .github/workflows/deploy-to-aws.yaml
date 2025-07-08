@@ -81,8 +81,8 @@ jobs:
           ENABLE_METRICS: 1
         run: |
           if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == 'refs/heads/main' ]]; then
-              STAGE=prod npm run-script deploy
+              STAGE=prod REGION=ap-southeast-2 npm run-script deploy
           else
-              STAGE=test npm run-script deploy
+              STAGE=test REGION=ap-southeast-2 npm run-script deploy
           fi
 
