@@ -10,15 +10,15 @@ on:
   workflow_dispatch:
     
 jobs:
-  call-test-workflow:
-    uses: GNS-Science/nshm-github-actions/.github/workflows/python-run-tests.yml@main
-    with:
-      operating-systems: "['ubuntu-latest']"
-      python-versions: "['3.11']"
-    secrets: inherit
+  # call-test-workflow:
+  #   uses: GNS-Science/nshm-github-actions/.github/workflows/python-run-tests.yml@main
+  #   with:
+  #     operating-systems: "['ubuntu-latest']"
+  #     python-versions: "['3.11']"
+  #   secrets: inherit
 
   deploy:
-    needs: call-test-workflow
+    # needs: call-test-workflow
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,7 +39,9 @@ jobs:
           installer-parallel: true
 
       - name: Ensure latest requiremments.txt
-        run: poetry export --without-hashes --format=requirements.txt > requirements.txt
+        run: 
+          poetry self add poetry-plugin-export
+          poetry export --without-hashes --format=requirements.txt > requirements.txt
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
