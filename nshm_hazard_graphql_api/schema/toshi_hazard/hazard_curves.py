@@ -1,6 +1,7 @@
 """Build Hazard curves from either dynamoDB models or from new dataset."""
 
 import logging
+from functools import lru_cache
 from typing import Iterable, Iterator, Optional
 
 from nzshm_common.location import CodedLocation, location
@@ -18,6 +19,7 @@ db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 DATASET_VS30 = [400, 1500]  # temporary measure while only some vs3 are in dataset
 
 
+@lru_cache
 def match_named_location_coord_code(location_code: str) -> Optional[GriddedLocation]:
     """Attempt to match a Named Location.
 
@@ -118,8 +120,9 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
                 log.debug('build_response_from_query got named location: %s' % named)
                 loc_code = named.code
             else:
-                log.debug('resolve with : %s degrees of precision' % resolution)
+                # log.debug('resolve with : %s degrees of precision' % resolution)
                 loc_code = CodedLocation(*[float(x) for x in obj.nloc_001.split('~')], resolution).code
+                # loc_code = obj.nloc_001
 
             yield ToshiHazardResult(
                 hazard_model=obj.hazard_model_id,
@@ -130,6 +133,8 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
                 curve=get_curve(obj),
             )
 
+    query_strategy = kwargs.get("query_strategy", "d2")
+
     gridded_locations = list(normalise_locations(kwargs['locs'], kwargs['resolution']))
     coded_locations = [
         CodedLocation(lat=loc.lat, lon=loc.lon, resolution=loc.resolution).resample(0.001).code
@@ -139,11 +144,21 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
     log.info(
         f"pre query DATASET_AGGR_ENABLED: {DATASET_AGGR_ENABLED} {set(DATASET_VS30).issuperset(set(kwargs['vs30s']))}"
         f" {set(DATASET_VS30)} {set(kwargs['vs30s'])}"
+        f" strategy: {query_strategy}"
     )
-    if DATASET_AGGR_ENABLED and set(DATASET_VS30).issuperset(set(kwargs['vs30s'])):
+    if (
+        query_strategy in ["d0", "d1", "d2"]
+        and DATASET_AGGR_ENABLED
+        and set(DATASET_VS30).issuperset(set(kwargs['vs30s']))
+    ):
         log.info('DATASET QUERY')
         query_res = datasets.get_hazard_curves(
-            coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
+            coded_locations,
+            kwargs['vs30s'],
+            kwargs['hazard_model'],
+            kwargs['imts'],
+            aggs=kwargs['aggs'],
+            strategy=query_strategy,
         )
     else:
         # old dynamodB query

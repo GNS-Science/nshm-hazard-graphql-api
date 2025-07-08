@@ -43,6 +43,7 @@ class QueryRoot(graphene.ObjectType):
         aggs=graphene.Argument(graphene.List(graphene.String)),
         vs30s=graphene.Argument(graphene.List(graphene.Int)),
         resolution=graphene.Argument(graphene.Float, required=False, default_value=0.1),
+        query_strategy=graphene.Argument(graphene.String, required=False),
     )
 
     gridded_hazard = graphene.Field(
