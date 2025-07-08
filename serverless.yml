@@ -156,10 +156,8 @@ provider:
             - arn:aws:s3:::ths-dataset-prod/*
         - Effect: Allow
           Action:
-            - ecr:ListImages
-            - ecr:ReplicateImage
             - ecr:GetDownloadUrlForLayer
-            - ecr:ListTagsForResource
+            - ecr:BatchGetImage
           Resource:
             - "arn:aws:ecr:*:461564345538:repository/*"
 
