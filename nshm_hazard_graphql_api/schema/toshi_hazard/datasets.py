@@ -39,11 +39,18 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy:
     else:
         qfn = ths_datasets.get_hazard_curves_naive
 
-    for obj in qfn(location_codes, vs30s, hazard_model, imts, aggs):
-        count += 1
-        yield obj
+    deferred_warning = None
+    try:
+        for obj in qfn(location_codes, vs30s, hazard_model, imts, aggs):
+            count += 1
+            yield obj
+    except RuntimeWarning as exc:
+        deferred_warning = exc
 
     t1 = dt.datetime.now()
     log.info(f"Executed dataset query for {count} curves in {(t1 -t0).total_seconds()} seconds.")
     delta = t1 - t0
     db_metrics.put_duration(__name__, 'hazard_curves', delta)
+
+    if deferred_warning:
+        raise deferred_warning

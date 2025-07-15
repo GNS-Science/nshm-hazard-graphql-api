@@ -11,20 +11,49 @@ from toshi_hazard_store.query import datasets, hazard_query
 fixture_path = pathlib.Path(__file__).parent / 'fixtures'
 
 
+def hazard_graphql_query(model: str, imt: str, locn: list[str], aggr: str, vs30: int, strategy: str) -> str:
+    return f"""
+        query {{
+            hazard_curves (
+                hazard_model: "{model}"
+                imts: ["{imt}"]
+                locs: {locn}
+                aggs: ["{aggr}"]
+                vs30s: [{vs30}]
+                resolution: 0.01
+                query_strategy: "{strategy}"
+                )
+            {{
+                ok
+                curves {{
+                    hazard_model
+                    imt
+                    loc
+                    agg
+                    vs30
+                    curve {{
+                        levels
+                        values
+                    }}
+                }}
+                locations {{
+                    lat
+                    lon
+                    resolution
+                    code
+                    name
+                    key
+                }}
+            }}
+        }}
+    """
+
+
 @pytest.fixture(autouse=True)
 def set_expected_vs30(monkeypatch):
     monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, "DATASET_VS30", [400, 1500])
 
 
-# @pytest.fixture()
-# def hazagg_fixture_fn():
-#     def fn(model, imt, loc, agg, vs30):
-#         """Test helper function"""
-#         fxt = fixture_path / 'HAZAGG_2022_API_JSON' / f"{model}_{imt}_{loc}_{agg}_{vs30}.json"
-#         assert fxt.exists
-#         return json.load(open(fxt))
-
-#     yield fn
 @pytest.fixture(scope='module')
 def json_hazard():
     fxt = fixture_path / 'API_HAZAGG_SMALL.json'
@@ -62,12 +91,6 @@ def dataset_locations():
     ]
 
 
-# @pytest.mark.parametrize("locn", ["-41.300~174.800", "-36.900~174.800"])
-# @pytest.mark.parametrize("vs30", [400, 1500])
-# @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
-# @pytest.mark.parametrize("aggr", ["0.005", "mean"])
-
-
 @pytest.mark.parametrize("vs30", [400, 1500])
 @pytest.mark.parametrize("strategy", ['d0', 'd1', 'd2'])
 @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
@@ -84,51 +107,14 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
     locn = "-41.300~174.800"
 
     expected = hazagg_fixture_fn(model, imt, locn, aggr, vs30)
+    print(expected)
 
-    QUERY = f"""
-        query {{
-            hazard_curves (
-                hazard_model: "{model}"
-                imts: ["{imt}"]
-                locs: ["{locn}"]
-                aggs: ["{aggr}"]
-                vs30s: [{vs30}]
-                resolution: 0.01
-                query_strategy: "{strategy}"
-                )
-            {{
-                ok
-                curves {{
-                    hazard_model
-                    imt
-                    loc
-                    agg
-                    vs30
-                    curve {{
-                        levels
-                        values
-                    }}
-                }}
-                locations {{
-                  lat
-                  lon
-                  resolution
-                  code
-                  name
-                  key
-                }}
-            }}
-        }}
-    """
+    qry = hazard_graphql_query(model, imt, f'["{locn}"]', aggr, vs30, strategy)
 
-    print(QUERY)
-
-    executed = graphql_client.execute(QUERY)
-
-    print(executed)
+    print(qry)
+    executed = graphql_client.execute(qry)
     res = executed['data']['hazard_curves']
 
-    print(res)
     assert res['ok'] is True
     assert res['curves'][0]['hazard_model'] == expected.hazard_model_id
     assert res['curves'][0]['imt'] == expected.imt
@@ -144,3 +130,55 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
         print(f"testing idx: {idx} res_value: {value}" f" expected_value: {exp_value}. diff: {exp_value - value}")
         assert value == pytest.approx(exp_value, abs=7e5 - 8)
         # assert value.lvl == exp_level
+
+
+@pytest.mark.parametrize("locn", ["-48.000~180.000", "-41.123~177.230"])
+@pytest.mark.parametrize("vs30", [400, 1500])
+@pytest.mark.parametrize("strategy", ['d2'])
+@pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
+@pytest.mark.parametrize("aggr", ["mean"])
+def test_hazard_curve_query_data_missing(
+    graphql_client, monkeypatch, hazagg_fixture_fn, locn, vs30, imt, aggr, strategy
+):
+    dspath = fixture_path / 'HAZAGG_SMALL'
+    assert dspath.exists()
+
+    monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
+    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
+
+    model = "NSHM_v1.0.4"
+
+    qry = hazard_graphql_query(model, imt, f'["{locn}"]', aggr, vs30, strategy)
+    executed = graphql_client.execute(qry)
+
+    data = executed['data']['hazard_curves']
+    assert data['ok'] is True
+    assert len(data['curves']) == 0
+
+
+@pytest.mark.parametrize("locn", ["-48.000~180.000"])
+@pytest.mark.parametrize("vs30", [400, 1500])
+@pytest.mark.parametrize("strategy", ['d2'])
+@pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
+@pytest.mark.parametrize("aggr", ["mean"])
+def test_hazard_curve_query_data_missing_for_one_location(
+    graphql_client, monkeypatch, hazagg_fixture_fn, locn, vs30, imt, aggr, strategy
+):
+    dspath = fixture_path / 'HAZAGG_SMALL'
+    assert dspath.exists()
+
+    monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
+    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
+
+    model = "NSHM_v1.0.4"
+    good_locn = "-41.300~174.800"
+    locations = f'["{good_locn}", "{locn}"]'
+
+    # expected = hazagg_fixture_fn(model, imt, good_locn, aggr, vs30)
+    qry = hazard_graphql_query(model, imt, locations, aggr, vs30, strategy)
+    executed = graphql_client.execute(qry)
+
+    data = executed['data']['hazard_curves']
+
+    assert data['ok'] is True
+    assert len(data['curves']) == 1  # same as expected good_data
