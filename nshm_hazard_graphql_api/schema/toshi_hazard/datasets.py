@@ -44,8 +44,11 @@ def get_hazard_curves(location_codes, vs30s, hazard_model, imts, aggs, strategy:
         for obj in qfn(location_codes, vs30s, hazard_model, imts, aggs):
             count += 1
             yield obj
-    except RuntimeWarning as exc:
-        deferred_warning = exc
+    except RuntimeWarning as err:
+        if "Failed to open dataset" in str(err):
+            deferred_warning = err
+        else:
+            raise err  # pragma: no cover
 
     t1 = dt.datetime.now()
     log.info(f"Executed dataset query for {count} curves in {(t1 -t0).total_seconds()} seconds.")
