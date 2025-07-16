@@ -114,24 +114,27 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
 
     def build_response_from_query(result: list, resolution: float) -> Iterator[ToshiHazardResult]:
         log.info("build_response_from_query")
-        for obj in result:
-            named = match_named_location_coord_code(obj.nloc_001)
-            if named:
-                log.debug('build_response_from_query got named location: %s' % named)
-                loc_code = named.code
-            else:
-                # log.debug('resolve with : %s degrees of precision' % resolution)
-                loc_code = CodedLocation(*[float(x) for x in obj.nloc_001.split('~')], resolution).code
-                # loc_code = obj.nloc_001
+        try:
+            for obj in result:
+                named = match_named_location_coord_code(obj.nloc_001)
+                if named:
+                    log.debug('build_response_from_query got named location: %s' % named)
+                    loc_code = named.code
+                else:
+                    # log.debug('resolve with : %s degrees of precision' % resolution)
+                    loc_code = CodedLocation(*[float(x) for x in obj.nloc_001.split('~')], resolution).code
+                    # loc_code = obj.nloc_001
 
-            yield ToshiHazardResult(
-                hazard_model=obj.hazard_model_id,
-                vs30=obj.vs30,
-                imt=obj.imt,
-                loc=loc_code,
-                agg=obj.agg,
-                curve=get_curve(obj),
-            )
+                yield ToshiHazardResult(
+                    hazard_model=obj.hazard_model_id,
+                    vs30=obj.vs30,
+                    imt=obj.imt,
+                    loc=loc_code,
+                    agg=obj.agg,
+                    curve=get_curve(obj),
+                )
+        except RuntimeWarning as exc:
+            log.warning(exc)
 
     query_strategy = kwargs.get("query_strategy", "d2")
 
@@ -170,5 +173,4 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
     result = ToshiHazardCurveResult(
         ok=True, locations=gridded_locations, curves=build_response_from_query(query_res, kwargs['resolution'])
     )
-
     return result
