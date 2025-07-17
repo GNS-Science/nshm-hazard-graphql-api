@@ -16,7 +16,7 @@ from .hazard_schema import GriddedLocation, ToshiHazardCurve, ToshiHazardCurveRe
 log = logging.getLogger(__name__)
 db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 
-DATASET_VS30 = [400, 1500]  # temporary measure while only some vs3 are in dataset
+DATASET_VS30 = [200, 400, 1500]  # temporary measure while only some vs3 are in dataset
 
 
 @lru_cache
