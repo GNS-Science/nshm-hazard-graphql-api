@@ -12,7 +12,6 @@ class TestHazardCurvesNamed:
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
-        # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
 
         QUERY = """
         query {

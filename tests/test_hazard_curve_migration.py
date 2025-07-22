@@ -92,9 +92,7 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
     dspath = fixture_path / 'HAZAGG_SMALL'
     assert dspath.exists()
 
-    # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'DATASET_AGGR_URI', str(dspath))
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
     locn = "-41.300~174.800"
@@ -137,7 +135,6 @@ def test_hazard_curve_query_data_missing(
     assert dspath.exists()
 
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
 
@@ -161,7 +158,6 @@ def test_hazard_curve_query_data_missing_for_one_location(
     assert dspath.exists()
 
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
     good_locn = "-41.300~174.800"
