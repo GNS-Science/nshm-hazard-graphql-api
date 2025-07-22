@@ -4,8 +4,6 @@ import pytest
 import pathlib
 import json
 from nzshm_common.location import CodedLocation
-import nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves
-import nshm_hazard_graphql_api.schema.toshi_hazard.datasets
 from toshi_hazard_store.query import datasets, hazard_query
 
 fixture_path = pathlib.Path(__file__).parent / 'fixtures'

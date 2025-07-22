@@ -2,9 +2,7 @@
 
 from unittest import mock
 
-import toshi_hazard_store.query.hazard_query
-import nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves
-import nshm_hazard_graphql_api.schema.toshi_hazard.datasets
+import toshi_hazard_store.query
 
 HAZARD_MODEL_ID = 'GRIDDED_THE_THIRD'
 
@@ -13,7 +11,7 @@ class TestHazardCurvesNamed:
     def test_get_wlg_by_shortcode(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
         # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
 
         QUERY = """
@@ -59,7 +57,7 @@ class TestHazardCurvesNamed:
         """For name location resolution is ignored. they always use 0.01"""
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -104,7 +102,7 @@ class TestHazardCurvesNamed:
     def test_get_wlg_by_latlon(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -150,7 +148,7 @@ class TestHazardCurvesNamed:
         """For name location resolution is ignored. they always use 0.01"""
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {

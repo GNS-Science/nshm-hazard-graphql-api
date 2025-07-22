@@ -1,14 +1,15 @@
 """Build Hazard curves from either dynamoDB models or from new dataset."""
 
+import datetime as dt
 import logging
 from functools import lru_cache
 from typing import Iterable, Iterator, Optional
 
 from nzshm_common.location import CodedLocation, location
+from toshi_hazard_store.query import datasets
 
 from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
 
-from . import datasets
 from .hazard_schema import GriddedLocation, ToshiHazardCurve, ToshiHazardCurveResult, ToshiHazardResult
 
 log = logging.getLogger(__name__)
@@ -132,6 +133,8 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
         except RuntimeWarning as exc:
             log.warning(exc)
 
+    t0 = dt.datetime.now()
+
     query_strategy = kwargs.get("query_strategy", "d2")
 
     gridded_locations = list(normalise_locations(kwargs['locs'], kwargs['resolution']))
@@ -148,8 +151,11 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
         aggs=kwargs['aggs'],
         strategy=query_strategy,
     )
+    curves = list(build_response_from_query(query_res, kwargs['resolution']))
 
-    result = ToshiHazardCurveResult(
-        ok=True, locations=gridded_locations, curves=build_response_from_query(query_res, kwargs['resolution'])
-    )
+    result = ToshiHazardCurveResult(ok=True, locations=gridded_locations, curves=curves)
+
+    t1 = dt.datetime.now()
+    log.info(f"Executed dataset query for {len(curves)} curves in {(t1 - t0).total_seconds()} seconds.")
+    db_metrics.put_duration(__name__, 'hazard_curves', (t1 - t0))
     return result

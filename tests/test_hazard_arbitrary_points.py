@@ -5,10 +5,7 @@ from unittest import mock
 from nzshm_common.location import CodedLocation
 from nzshm_common.location.location import LOCATIONS_BY_ID
 
-import toshi_hazard_store.query.hazard_query
-
-import nshm_hazard_graphql_api.schema.toshi_hazard.datasets
-import nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves
+import toshi_hazard_store.query
 
 
 class TestHazardCurves:
@@ -16,7 +13,7 @@ class TestHazardCurves:
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
         # monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
         # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
 
         QUERY = """
@@ -90,7 +87,7 @@ class TestHazardCurves:
     def test_get_hazard_curves_with_key_locations_lowres(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -160,7 +157,7 @@ class TestHazardCurves:
     def test_get_wlg_by_latlon(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -224,7 +221,7 @@ class TestHazardCurves:
     def test_get_hazard_for_gridded_with_arbitrary_locations(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
