@@ -6,10 +6,6 @@
  - update to THS 1.2.1
  - migrate to THS hazard queries
 
-### Added
- - using THS 1.1.3 with out-of-bounds handling
- - test coverage for THS out-of-bounds exceptions
-
 ## [0.2.1] - 2025-07-17
 
 ### Added
