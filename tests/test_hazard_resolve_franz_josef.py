@@ -9,6 +9,7 @@ from nzshm_common.location.location import LOCATIONS_BY_ID
 from toshi_hazard_store import model
 
 import toshi_hazard_store.query.hazard_query
+import nshm_hazard_graphql_api.schema.toshi_hazard.datasets
 
 import nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves
 
@@ -49,8 +50,8 @@ class TestHazardCurvesNamedFrznJosef:
     def test_get_by_shortcode(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
+        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
+        # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
 
         QUERY = """
         query {
@@ -95,8 +96,7 @@ class TestHazardCurvesNamedFrznJosef:
         """For name location resolution is ignored. they always use 0.01"""
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
+        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -140,8 +140,7 @@ class TestHazardCurvesNamedFrznJosef:
     def test_get_franz_josef_by_latlon(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
+        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -185,8 +184,7 @@ class TestHazardCurvesNamedFrznJosef:
     def test_get_franz_josef_by_latlon_default_resolution(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
+        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -229,8 +227,7 @@ class TestHazardCurvesNamedFrznJosef:
     def test_get_franz_josef_by_latlon_low_hazard_resolution(self, mock_query_response, monkeypatch, graphql_client):
 
         mocked_qry = mock.Mock(return_value=mock_query_response)
-        monkeypatch.setattr(toshi_hazard_store.query.hazard_query, 'get_hazard_curves', mocked_qry)
-        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', False)
+        monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
         query {
@@ -263,10 +260,6 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
-            ["-43.376~170.188"],
-            [400],
-            [HAZARD_MODEL_ID],
-            ['PGA'],
-            aggs=["mean"],
+        mocked_qry.assert_called_with(
+            ["-43.376~170.188"], [400], HAZARD_MODEL_ID, ['PGA'], aggs=["mean"], strategy='d2'
         )
