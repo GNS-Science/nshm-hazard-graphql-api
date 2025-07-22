@@ -1,22 +1,19 @@
 """Build Hazard curves from either dynamoDB models or from new dataset."""
 
+import datetime as dt
 import logging
 from functools import lru_cache
 from typing import Iterable, Iterator, Optional
 
 from nzshm_common.location import CodedLocation, location
-from toshi_hazard_store import query_v3
+from toshi_hazard_store.query import datasets
 
 from nshm_hazard_graphql_api.cloudwatch import ServerlessMetricWriter
-from nshm_hazard_graphql_api.config import DATASET_AGGR_ENABLED
 
-from . import datasets
 from .hazard_schema import GriddedLocation, ToshiHazardCurve, ToshiHazardCurveResult, ToshiHazardResult
 
 log = logging.getLogger(__name__)
 db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
-
-DATASET_VS30 = [200, 400, 1500]  # temporary measure while only some vs3 are in dataset
 
 
 @lru_cache
@@ -96,7 +93,7 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
     """
     Run query against data source.
 
-    Source can be either DynamoDB usign v3 query, or the new Dataset.
+    Source is a ToshiHazardStore dataset.
 
     Args:
         kwargs (dict): Query arguments.
@@ -136,6 +133,8 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
         except RuntimeWarning as exc:
             log.warning(exc)
 
+    t0 = dt.datetime.now()
+
     query_strategy = kwargs.get("query_strategy", "d2")
 
     gridded_locations = list(normalise_locations(kwargs['locs'], kwargs['resolution']))
@@ -144,33 +143,19 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
         for loc in gridded_locations
     ]
 
-    log.info(
-        f"pre query DATASET_AGGR_ENABLED: {DATASET_AGGR_ENABLED} {set(DATASET_VS30).issuperset(set(kwargs['vs30s']))}"
-        f" {set(DATASET_VS30)} {set(kwargs['vs30s'])}"
-        f" strategy: {query_strategy}"
+    query_res = datasets.get_hazard_curves(
+        coded_locations,
+        kwargs['vs30s'],
+        kwargs['hazard_model'],
+        kwargs['imts'],
+        aggs=kwargs['aggs'],
+        strategy=query_strategy,
     )
-    if (
-        query_strategy in ["d0", "d1", "d2"]
-        and DATASET_AGGR_ENABLED
-        and set(DATASET_VS30).issuperset(set(kwargs['vs30s']))
-    ):
-        log.info('DATASET QUERY')
-        query_res = datasets.get_hazard_curves(
-            coded_locations,
-            kwargs['vs30s'],
-            kwargs['hazard_model'],
-            kwargs['imts'],
-            aggs=kwargs['aggs'],
-            strategy=query_strategy,
-        )
-    else:
-        # old dynamodB query
-        log.info('DYNAMODB QUERY')
-        query_res = query_v3.get_hazard_curves(
-            coded_locations, kwargs['vs30s'], [kwargs['hazard_model']], kwargs['imts'], aggs=kwargs['aggs']
-        )
+    curves = list(build_response_from_query(query_res, kwargs['resolution']))
 
-    result = ToshiHazardCurveResult(
-        ok=True, locations=gridded_locations, curves=build_response_from_query(query_res, kwargs['resolution'])
-    )
+    result = ToshiHazardCurveResult(ok=True, locations=gridded_locations, curves=curves)
+
+    t1 = dt.datetime.now()
+    log.info(f"Executed dataset query for {len(curves)} curves in {(t1 - t0).total_seconds()} seconds.")
+    db_metrics.put_duration(__name__, 'hazard_curves', (t1 - t0))
     return result

@@ -4429,14 +4429,14 @@ files = [
 
 [[package]]
 name = "toshi-hazard-store"
-version = "1.1.3"
+version = "1.2.1"
 description = "Library for saving and retrieving NZHSM openquake hazard results with convenience (uses AWS Dynamodb)."
 optional = false
 python-versions = "<3.13,>=3.10"
 groups = ["main"]
 files = [
-    {file = "toshi_hazard_store-1.1.3-py3-none-any.whl", hash = "sha256:6652caa29b12bc3dd1df5e81415914a95c16e109fcafede07bbdab858ade131f"},
-    {file = "toshi_hazard_store-1.1.3.tar.gz", hash = "sha256:d739ae07ebd4bff7025861411af73be03bef4fd77e606596a71593b03172fb8a"},
+    {file = "toshi_hazard_store-1.2.1-py3-none-any.whl", hash = "sha256:475d56f6e6bad533da41bb809c5501d863dbaebaaa546f1f9b3928c7c820317d"},
+    {file = "toshi_hazard_store-1.2.1.tar.gz", hash = "sha256:5058738d15f97840976cd46c60082da2bdfa9cc7dc998ccf93a81e039a506e62"},
 ]
 
 [package.dependencies]
@@ -5154,4 +5154,4 @@ test = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "7ea0ac142e9f3453dc3dcbfff79d5ef4e6c883512e9992ff57421a1110c3cda2"
+content-hash = "2730bb23c8efe1ffb8c1b138251dd9cd39423942b643468ac6cd857451f7a17b"

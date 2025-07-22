@@ -4,8 +4,6 @@ import pytest
 import pathlib
 import json
 from nzshm_common.location import CodedLocation
-import nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves
-import nshm_hazard_graphql_api.schema.toshi_hazard.datasets
 from toshi_hazard_store.query import datasets, hazard_query
 
 fixture_path = pathlib.Path(__file__).parent / 'fixtures'
@@ -47,11 +45,6 @@ def hazard_graphql_query(model: str, imt: str, locn: list[str], aggr: str, vs30:
             }}
         }}
     """
-
-
-@pytest.fixture(autouse=True)
-def set_expected_vs30(monkeypatch):
-    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, "DATASET_VS30", [400, 1500])
 
 
 @pytest.fixture(scope='module')
@@ -99,9 +92,7 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
     dspath = fixture_path / 'HAZAGG_SMALL'
     assert dspath.exists()
 
-    # monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.datasets, 'DATASET_AGGR_URI', str(dspath))
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
     locn = "-41.300~174.800"
@@ -144,7 +135,6 @@ def test_hazard_curve_query_data_missing(
     assert dspath.exists()
 
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
 
@@ -168,7 +158,6 @@ def test_hazard_curve_query_data_missing_for_one_location(
     assert dspath.exists()
 
     monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
-    monkeypatch.setattr(nshm_hazard_graphql_api.schema.toshi_hazard.hazard_curves, 'DATASET_AGGR_ENABLED', True)
 
     model = "NSHM_v1.0.4"
     good_locn = "-41.300~174.800"

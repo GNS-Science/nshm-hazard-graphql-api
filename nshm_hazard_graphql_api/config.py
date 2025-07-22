@@ -21,6 +21,3 @@ STACK_NAME = os.getenv('STACK_NAME', 'nshm_hazard_graphql_api')
 LOGGING_CFG = os.getenv('LOGGING_CFG', 'nshm_hazard_graphql_api/logging_aws.yaml')
 ENABLE_METRICS = bool(os.getenv('ENABLE_METRICS', '').upper() in ["1", "Y", "YES", "TRUE"])
 CW_METRICS_RESOLUTION = os.getenv('CW_METRICS_RESOLUTION', 60)  # 1 for high resolution or 60
-
-DATASET_AGGR_ENABLED = bool(os.getenv('DATASET_AGGR_ENABLED', '').upper() in ["1", "Y", "YES", "TRUE"])
-DATASET_AGGR_URI = os.getenv('DATASET_AGGR_URI', '')

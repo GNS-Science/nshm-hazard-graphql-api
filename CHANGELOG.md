@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.2] - 2025-07-23
+
+### Changed
+ - update to THS 1.2.1
+ - migrate to THS hazard queries
+
 ## [0.2.1] - 2025-07-17
 
 ### Added
