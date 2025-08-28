@@ -3,7 +3,7 @@
 ## [0.2.3] - PENDING
 
 ### Changed
- - fixed import on graphql_server library.
+ - pinned import on graphql_server library to 3.0.0b7 until upstream release is fixed.
 
 ## [0.2.2] - 2025-07-23
 
