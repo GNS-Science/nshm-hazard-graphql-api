@@ -22,7 +22,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.11,<3.14"
 flask = "^3.0.3"
 flask-cors = "^4.0.1"
 pyyaml = "^6.0.1"
@@ -40,7 +40,7 @@ werkzeug = "^3.1.3"
 poetry-plugin-export = "^1.9.0"
 serverless-wsgi = "^3.0.5"
 python-dotenv = "^1.1.0"
-toshi-hazard-store = "^1.2.1"
+toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store.git", rev = "c6c1e7b11a1db1e3a8e8792f6e225272ca2b41b7"}
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.2.8"
@@ -103,7 +103,7 @@ doc = [
 [tool.black]
 line-length = 120
 skip-string-normalization = true
-target-version = ['py37', 'py38', 'py39']
+target-version = ['py39', 'py310']
 include = '\.pyi?$'
 exclude = '''
 /(
