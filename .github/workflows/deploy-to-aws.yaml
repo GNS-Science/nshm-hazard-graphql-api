@@ -13,7 +13,6 @@ jobs:
   call-test-workflow:
     uses: GNS-Science/nshm-github-actions/.github/workflows/deploy-to-aws.yml@feature/16-deploy-to-aws
     with:
-      operating-system: 'ubuntu-latest'
       python-version: '3.11'
       node-version: '22'
       docker: true
