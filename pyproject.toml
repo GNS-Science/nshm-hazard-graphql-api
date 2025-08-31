@@ -22,7 +22,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.14"
+python = ">=3.13,<3.14"
 flask = "^3.0.3"
 flask-cors = "^4.0.1"
 pyyaml = "^6.0.1"
@@ -37,7 +37,6 @@ matplotlib = "^3.10.3"
 pyproj = "^3.7.1"
 geopandas = "^1.0.1"
 werkzeug = "^3.1.3"
-poetry-plugin-export = "^1.9.0"
 serverless-wsgi = "^3.0.5"
 python-dotenv = "^1.1.0"
 toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store.git", rev = "c6c1e7b11a1db1e3a8e8792f6e225272ca2b41b7"}
@@ -50,6 +49,7 @@ flake8  = { version = "^3.9.2"}
 flake8-docstrings = { version = "^1.6.0", optional = true }
 virtualenv  = { version = "^20.2.2", optional = true}
 pip  = { version = "^20.3.1", optional = true}
+poetry-plugin-export = "^1.9.0"
 
 mkdocs  = { version = "^1.1.2"}
 mkdocs-include-markdown-plugin  = { version = "^1.0.0"}
