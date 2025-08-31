@@ -29,7 +29,7 @@ RUN dnf install gcc gcc-c++ -y
 
 WORKDIR ${FUNCTION_ROOT_DIR}
 RUN pip install --upgrade pip
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-deps -r requirements.txt
 
 # lambda entry point
 CMD ["nshm_hazard_graphql_api.nshm_hazard_graphql_api.app"]
