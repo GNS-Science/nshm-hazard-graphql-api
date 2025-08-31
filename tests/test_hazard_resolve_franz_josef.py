@@ -79,7 +79,7 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
             [HAZARD_MODEL_ID],
@@ -125,7 +125,7 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
             [HAZARD_MODEL_ID],
@@ -169,7 +169,7 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
             [HAZARD_MODEL_ID],
@@ -212,7 +212,7 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
             [HAZARD_MODEL_ID],
