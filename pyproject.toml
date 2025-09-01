@@ -31,7 +31,7 @@ graphene = "^3.3"
 
 boto3 = "^1.24.57"
 python-dateutil = "^2.8.2"
-nzshm-model = "^0.13.6"
+# nzshm-model = "^0.13.6"
 nzshm-common = "^0.8.4"
 matplotlib = "^3.10.3"
 pyproj = "^3.7.1"
