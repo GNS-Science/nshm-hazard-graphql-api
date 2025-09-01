@@ -5,7 +5,7 @@
 ### Changed
  - pinned import on graphql_server library to 3.0.0b7 until upstream release is fixed.
  - update to python 3.13 ECR image base to resolve pyproj build issues (and get better doc support)
- - updated upstream libs (for py313 nzsdhm-mode and toshi-hazard-store)
+ - updated upstream toshi-hazard-store
 
 ## [0.2.2] - 2025-07-23
 

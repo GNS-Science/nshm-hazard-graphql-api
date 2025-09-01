@@ -76,7 +76,7 @@ class QueryRoot(graphene.ObjectType):
         return hazard_curves.hazard_curves(kwargs)
 
     def resolve_about(root, info, **args):
-        return f"Hello World!, I am nshm_hazard_graphql_api version: {nshm_hazard_graphql_api.__version__}"
+        return f"Hello World, I am nshm_hazard_graphql_api version: {nshm_hazard_graphql_api.__version__}"
 
 
 schema_root = graphene.Schema(query=QueryRoot, mutation=None, auto_camelcase=False)

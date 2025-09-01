@@ -37,4 +37,4 @@ class TestSchemaAboutResolver(unittest.TestCase):
 
         executed = self.client.execute(QUERY)
         print(executed)
-        self.assertTrue('Hello World!' in executed['data']['about'])
+        self.assertTrue('Hello World' in executed['data']['about'])
