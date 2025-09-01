@@ -16,6 +16,7 @@ RUN dnf install git-core gcc gcc-c++ -y &&\
     pip install --upgrade pip &&\
     pip3 install --no-deps -r requirements.txt &&\
     pip cache purge &&\
+    dnf remove gcc-c++ git-core -y &&\
     dnf clean all
 
 # lambda entry point
