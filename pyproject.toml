@@ -31,7 +31,6 @@ graphene = "^3.3"
 
 boto3 = "^1.24.57"
 python-dateutil = "^2.8.2"
-# nzshm-model = "^0.13.6"
 nzshm-common = "^0.8.4"
 matplotlib = "^3.10.3"
 pyproj = "^3.7.1"
@@ -39,7 +38,7 @@ geopandas = "^1.0.1"
 werkzeug = "^3.1.3"
 serverless-wsgi = "^3.0.5"
 python-dotenv = "^1.1.0"
-toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store.git", rev = "c6c1e7b11a1db1e3a8e8792f6e225272ca2b41b7"}
+toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store.git", rev = "1e7729542ecfd34c95a34902b58c9adfd910212a"}
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.2.8"
