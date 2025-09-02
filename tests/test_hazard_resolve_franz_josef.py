@@ -79,12 +79,13 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
-            [HAZARD_MODEL_ID],
+            HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
+            strategy='d2'
         )
 
     # TODO this will be deprecated
@@ -125,12 +126,13 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
-            [HAZARD_MODEL_ID],
+            HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
+            strategy='d2'
         )
 
     def test_get_franz_josef_by_latlon(self, mock_query_response, monkeypatch, graphql_client):
@@ -169,12 +171,13 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
-            [HAZARD_MODEL_ID],
+            HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
+            strategy='d2'
         )
 
     def test_get_franz_josef_by_latlon_default_resolution(self, mock_query_response, monkeypatch, graphql_client):
@@ -212,12 +215,13 @@ class TestHazardCurvesNamedFrznJosef:
 
         assert res['ok'] is True
         assert mocked_qry.call_count == 1
-        assert mocked_qry.called_with(
+        mocked_qry.assert_called_with(
             ["-43.376~170.188"],  # the resolved codes for the respective cities by ID
             [400],
-            [HAZARD_MODEL_ID],
+            HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
+            strategy='d2'
         )
 
     def test_get_franz_josef_by_latlon_low_hazard_resolution(self, mock_query_response, monkeypatch, graphql_client):
