@@ -1,4 +1,5 @@
 """Schema objects for hazard."""
+
 import graphene
 
 

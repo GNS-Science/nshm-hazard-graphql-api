@@ -27,7 +27,7 @@ def build_gridded_hazard_models(**kwargs):
     grid_poes = [random.randint(0, int(4.7e6)) / 1e6 for x in range(len(grid))]
     grid_poes[0] = 0.1
 
-    for (imt, vs30, agg) in itertools.product(imts, vs30s, aggs):
+    for imt, vs30, agg in itertools.product(imts, vs30s, aggs):
 
         obj = model.GriddedHazard.new_model(
             hazard_model_id=HAZARD_MODEL_ID,

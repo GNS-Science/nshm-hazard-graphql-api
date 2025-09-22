@@ -1,6 +1,7 @@
 """
 This module exports comfiguration for the current system
 """
+
 import os
 
 from dotenv import load_dotenv

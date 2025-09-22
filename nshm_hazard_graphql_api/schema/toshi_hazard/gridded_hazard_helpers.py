@@ -58,7 +58,7 @@ def edge_tiles(clipping_parts: Iterable[CustomPolygon], tiles: Iterable[CustomPo
                         yield clipped
                     else:
                         raise RuntimeError("Clipped tile %s is not a Polygon" % (repr(clipped.polygon())))
-                except (Exception) as err:
+                except Exception as err:
                     log.warning("edge_tiles raised error: %s" % err)
 
 
