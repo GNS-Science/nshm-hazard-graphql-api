@@ -27,7 +27,7 @@ locs = [
 def build_hazard_aggregation_models():
     n_lvls = 29
     lvps = list(map(lambda x: model.LevelValuePairAttribute(lvl=x / 1e3, val=(x / 1e6)), range(1, n_lvls)))
-    for (loc, vs30, agg) in itertools.product(locs, vs30s, aggs):
+    for loc, vs30, agg in itertools.product(locs, vs30s, aggs):
         for imt, val in enumerate(imts):
             yield model.HazardAggregation(
                 values=lvps,
@@ -85,7 +85,7 @@ class TestHazardCurvesNamedFrznJosef:
             HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
-            strategy='d2'
+            strategy='d2',
         )
 
     # TODO this will be deprecated
@@ -132,7 +132,7 @@ class TestHazardCurvesNamedFrznJosef:
             HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
-            strategy='d2'
+            strategy='d2',
         )
 
     def test_get_franz_josef_by_latlon(self, mock_query_response, monkeypatch, graphql_client):
@@ -177,7 +177,7 @@ class TestHazardCurvesNamedFrznJosef:
             HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
-            strategy='d2'
+            strategy='d2',
         )
 
     def test_get_franz_josef_by_latlon_default_resolution(self, mock_query_response, monkeypatch, graphql_client):
@@ -221,7 +221,7 @@ class TestHazardCurvesNamedFrznJosef:
             HAZARD_MODEL_ID,
             ['PGA'],
             aggs=["mean"],
-            strategy='d2'
+            strategy='d2',
         )
 
     def test_get_franz_josef_by_latlon_low_hazard_resolution(self, mock_query_response, monkeypatch, graphql_client):

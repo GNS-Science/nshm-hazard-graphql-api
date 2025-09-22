@@ -1,10 +1,12 @@
 # Changelog
 
-## [0.2.3] - PENDING
+## [0.2.3] - 2025-09-23
 
 ### Changed
  - pinned import on graphql_server library to 3.0.0b7 until upstream release is fixed.
  - upgraded to Python 3.12
+ - move to yarn2 for node package management
+ - update python packages with security warnings
 
 ## [0.2.2] - 2025-07-23
 
