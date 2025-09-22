@@ -1,21 +1,27 @@
 # DEVELOPMENT
 
-This application uses  serverless.com.
-
+This application uses serverless.com.
 
 ### Environment setup
 
  - clone the repo
- - check/install a recent node version >=17.8
- - check/install a recent npm version >=8.11
- - install serverless `npm install --save serverless` [more info]()
- - install `npm install --save serverless-python-requirements`  [more info](https://www.serverless.com/blog/serverless-python-packaging/)
- - install `npm install -save serverless-wsgi` [more info](https://www.serverless.com/plugins/serverless-wsgi)
- - `serverless plugin install -n serverless-python-requirements`
- - `serverless plugin install -n serverless-wsgi`
+ - check/install a recent node version >=22
+   `nvm use 22`
 
+- setup python env
+```
+pyenv local 3.12
+poetry env use 3.12
+```
 
-Now `sls info` should print something like ...
+setup yarn 2 ...
+```
+corepack enable
+yarn set version berry
+yarn install
+```
+
+Now `yarn sls info` should print something like ...
 
 ```
 chrisbc@tryharder-ubuntu:/GNSDATA/API/kororaa-graphql-api$ sls info
@@ -28,19 +34,18 @@ Bugs:        github.com/serverless/serverless/issue
 
 ```
 
-You'll problably see an error, if youtr AWS credentials are not thise required for SLS.
-
+You'll problably see an error, if your AWS credentials are not thise required for SLS.
 
 ### AWS credentials
 
 ## TESTING
 
-### Run API locally
-`$> ENABLE_METRICS=0 AWS_PROFILE=toshi_batch_devops sls wsgi serve --region ap-southeast-2 --stage PROD`
-
-
 ### API Feature tests
-`$>poetry run pytest`
+`poetry run pytest`
+
+### Run API locally
+`ENABLE_METRICS=0 poetry run yarn sls wsgi serve`
+poetry run yarn serverless wsgi serve
 
 
 

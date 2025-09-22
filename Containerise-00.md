@@ -13,14 +13,14 @@ Login Succeeded
 
 ## Get a base image
 
-Using the AWS official python lambda image: `public.ecr.aws/lambda/python:3.11`
+Using the AWS official python lambda image: `public.ecr.aws/lambda/python:3.12`
 
 ```
-docker pull public.ecr.aws/lambda/python:3.11
+docker pull public.ecr.aws/lambda/python:3.12
 3.12: Pulling from lambda/python
 .....
-Status: Downloaded newer image for public.ecr.aws/lambda/python:3.11
-public.ecr.aws/lambda/python:3.11
+Status: Downloaded newer image for public.ecr.aws/lambda/python:3.12
+public.ecr.aws/lambda/python:3.12
 ```
 
 ### get the requirements
@@ -28,18 +28,14 @@ poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 ### test wsgi handlers
 
-`poetry run npx serverless wsgi serve`
+`ENABLE_METRICS=0 poetry run yarn sls wsgi serve`
 
 ## A Dockerfile
 
 see [Dockerfile](./Dockerfile)
 
 ### build it
+`BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls package`
 
-`BUILDX_NO_DEFAULT_ATTESTATIONS=1 npx serverless package`
-
-### and/or deploy it
-
-this will push the image
-
-`BUILDX_NO_DEFAULT_ATTESTATIONS=1 npx serverless deploy  --stage dev --region us-east-1`
+### and/or just deploy it
+`BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls deploy --stage dev --region ap-southeast-2`
