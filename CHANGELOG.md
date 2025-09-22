@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.3] - PENDING
+## [0.2.3] - 2025-09-23
 
 ### Changed
  - pinned import on graphql_server library to 3.0.0b7 until upstream release is fixed.

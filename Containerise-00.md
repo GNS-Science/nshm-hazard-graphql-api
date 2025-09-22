@@ -28,14 +28,20 @@ poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 ### test wsgi handlers
 
-`ENABLE_METRICS=0 poetry run yarn sls wsgi serve`
+```
+ENABLE_METRICS=0 poetry run yarn sls wsgi serve
+```
 
 ## A Dockerfile
 
 see [Dockerfile](./Dockerfile)
 
 ### build it
-`BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls package`
+```
+BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls package
+```
 
 ### and/or just deploy it
-`BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls deploy --stage dev --region ap-southeast-2`
+```
+BUILDX_NO_DEFAULT_ATTESTATIONS=1 yarn sls deploy --stage dev --region ap-southeast-2
+```
