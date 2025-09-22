@@ -6,7 +6,8 @@
     "sls_requirements_1": "serverless requirements clean",
     "sls_requirements_2": "serverless requirements cleanCache",
     "sls_doctor": "serverless doctor",
-    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}"
+    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}",
+    "wsgi_serve": "serverless wsgi serve --debug"
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,12 @@
   "homepage": "https://github.com/GNS-Science/nshm-hazard-graphql-api#readme",
   "dependencies": {
     "serverless": "^3.40.0",
-    "serverless-plugin-warmup": "^8.2.1",
-    "serverless-wsgi": "^3.0.2"
+    "serverless-plugin-warmup": "^8.3.0"
   },
   "devDependencies": {
     "serverless-python-requirements": "^6.1.2",
-    "serverless-s3-local": "^0.6.22"
+    "serverless-s3-local": "^0.8.5",
+    "serverless-wsgi": "^3.1.0"
   },
   "overrides": {
     "serverless-python-requirements": {
