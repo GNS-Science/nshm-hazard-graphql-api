@@ -21,4 +21,5 @@ jobs:
       python-version: '3.12'
       node-version: '22'
       docker: true
+      node-pkg-manager: 'yarn2' 
     secrets: inherit
