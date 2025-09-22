@@ -24,7 +24,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 flask = "^3.0.3"
-flask-cors = "^4.0.1"
+flask-cors = "^6.0"
 pyyaml = "^6.0.1"
 graphql-server = {extras = ["flask"], version = "3.0.0b7"}
 graphene = "^3.3"
@@ -44,12 +44,11 @@ toshi-hazard-store = "^1.2.1"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.2.8"
-black  = { version = "^22.3"}
+black  = { version = "^24.3"}
 isort  = { version = "^5.8.0"}
 flake8  = { version = "^7.3.0"}
 flake8-docstrings = { version = "^1.7.0", optional = true }
 virtualenv  = { version = "^20.2.2", optional = true}
-pip  = { version = "^20.3.1", optional = true}
 
 mkdocs  = { version = "^1.1.2"}
 mkdocs-include-markdown-plugin  = { version = "^1.0.0"}
@@ -58,7 +57,7 @@ mkdocstrings  = { version = "^0.18.0"}
 mkdocs-material-extensions  = { version = "^1.0.1"}
 mkdocs-autorefs = {version = "^0.3.1"}
 
-pymdown-extensions = {version = "^9.4"}
+pymdown-extensions = {version = "^10.0"}
 mkdocstrings-python = {version = "^0.6.5"}
 mkdocs-pymdownx-material-extras = "^2.0.3"
 
@@ -76,6 +75,7 @@ pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 mypy = "^1.4.1"
 gql = "^3.5.3"
+pip = "^25.0"
 
 
 [tool.poetry.extras]
