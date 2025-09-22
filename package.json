@@ -29,5 +29,6 @@
     "serverless-python-requirements": {
       "serverless": "$serverless"
     }
-  }
+  },
+  "packageManager": "yarn@4.10.2"
 }
