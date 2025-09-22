@@ -1,7 +1,7 @@
 [tool]
 [project]
 name = "nshm-hazard-graphql-api"
-version = "0.2.2"
+version = "0.2.3"
 homepage = "https://github.com/gns-science/nshm-hazard-graphql-api"
 description = "A Grapql API for NZHSM Hazard.."
 #authors = [{"GNS Science New Zealand" = "<nshm@gns.cri.nz>"}]
