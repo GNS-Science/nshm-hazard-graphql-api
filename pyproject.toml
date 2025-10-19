@@ -1,6 +1,6 @@
 [project]
 name = "nshm-hazard-graphql-api"
-version = "0.2.3"
+version = "0.3.0"
 homepage = "https://github.com/gns-science/nshm-hazard-graphql-api"
 description = "A Grapql API for NZHSM Hazard.."
 authors = [
