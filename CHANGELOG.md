@@ -9,10 +9,10 @@
  - ensureCI/CD workflows use minimum install footprints
 
 ### Added
- - tox audit step 
+ - tox audit step
 
 ## Removed
- - doc dependency group 
+ - doc dependency group
 
 ## [0.2.3] - 2025-09-23
 
