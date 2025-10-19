@@ -3,7 +3,7 @@
 import unittest
 import itertools
 import random
-from moto import mock_dynamodb
+from moto import mock_aws
 
 from graphene.test import Client
 
@@ -42,7 +42,7 @@ def build_gridded_hazard_models(**kwargs):
         yield obj
 
 
-@mock_dynamodb
+@mock_aws
 class TestGriddedHazard(unittest.TestCase):
     def setUp(self):
         self.client = Client(schema_root)
