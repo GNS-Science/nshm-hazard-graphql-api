@@ -1,3 +1,7 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: gnssciencenshm
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: nshm-hazard-graphql-api
 service: nzshm22-hazard-graphql-api
 configValidationMode: error
 
@@ -68,7 +72,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.11
+  runtime: python3.12
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
