@@ -1,4 +1,5 @@
 """Build Gridded Hazard."""
+
 import json
 import logging
 import math
