@@ -72,7 +72,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.11
+  runtime: python3.12
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:

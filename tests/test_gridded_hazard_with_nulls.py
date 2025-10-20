@@ -7,9 +7,9 @@ from unittest import mock
 
 from graphene.test import Client
 
-from moto import mock_cloudwatch
+from moto import mock_aws
 
-with mock_cloudwatch():
+with mock_aws():
     from nshm_hazard_graphql_api.schema import schema_root
 
 from nzshm_common.grids import RegionGrid
