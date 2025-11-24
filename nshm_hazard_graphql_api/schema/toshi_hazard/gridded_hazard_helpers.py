@@ -1,7 +1,7 @@
+import datetime
 import io
 import logging
 import zipfile
-from datetime import datetime as dt
 from functools import lru_cache
 from pathlib import Path
 from typing import Iterable, Tuple, Union
@@ -121,18 +121,24 @@ def nz_simplified_polygons() -> Tuple[CustomPolygon, ...]:
 
 @lru_cache
 def clip_tiles(clipping_parts: Tuple[CustomPolygon], tiles: Tuple[CustomPolygon]):
-    t0 = dt.utcnow()
+    t0 = datetime.datetime.now(datetime.UTC)
     covered_tiles = set(inner_tiles(clipping_parts, tiles))
-    db_metrics.put_duration(__name__, 'filter_inner_tiles', dt.utcnow() - t0)
+    db_metrics.put_duration(__name__, 'filter_inner_tiles', datetime.datetime.now(datetime.UTC) - t0)
 
     outer_tiles = set(tiles).difference(covered_tiles)
 
-    t0 = dt.utcnow()
+    t0 = datetime.datetime.now(datetime.UTC)
     clipped_tiles = set(edge_tiles(clipping_parts, outer_tiles))
-    db_metrics.put_duration(__name__, 'clip_outer_tiles', dt.utcnow() - t0)
+    db_metrics.put_duration(__name__, 'clip_outer_tiles', datetime.datetime.now(datetime.UTC) - t0)
 
-    log.info('filtered %s tiles to %s inner in %s' % (len(tiles), len(covered_tiles), dt.utcnow() - t0))
-    log.info('clipped %s edge tiles to %s in %s' % (len(outer_tiles), len(clipped_tiles), dt.utcnow() - t0))
+    log.info(
+        'filtered %s tiles to %s inner in %s'
+        % (len(tiles), len(covered_tiles), datetime.datetime.now(datetime.UTC) - t0)
+    )
+    log.info(
+        'clipped %s edge tiles to %s in %s'
+        % (len(outer_tiles), len(clipped_tiles), datetime.datetime.now(datetime.UTC) - t0)
+    )
 
     new_geometry = covered_tiles.union(clipped_tiles)
     return tuple(new_geometry)
