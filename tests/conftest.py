@@ -28,17 +28,6 @@ def aws_credentials():
     os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 
-# @pytest.fixture(scope="module")
-# def s3(aws_credentials):
-#     with mock_s3():
-#         yield boto3.client("s3", region_name="us-east-1")
-
-# @pytest.fixture(scope="module")
-# def cloudwatch(aws_credentials):
-#     with mock_mock_cloudwatch():
-#         yield boto3.client("cloudwatch", region_name="us-east-1")
-
-
 HAZARD_MODEL_ID = 'GRIDDED_THE_THIRD'
 vs30s = [250, 350, 450]
 imts = ['PGA', 'SA(0.5)']
@@ -50,20 +39,6 @@ locs = [
     CodedLocation(wlg['latitude'], wlg['longitude'], 0.001),
     CodedLocation(dud['latitude'], dud['longitude'], 0.001),
 ]
-
-
-# def build_hazard_aggregation_models():
-#     # n_lvls = 29
-#     # lvps = list(map(lambda x: model.LevelValuePairAttribute(lvl=x / 1e3, val=(x / 1e6)), range(1, n_lvls)))
-#     # for loc, vs30, agg in itertools.product(locs[:5], vs30s, aggs):
-#     #     for imt, val in enumerate(imts):
-#     #         yield model.HazardAggregation(
-#     #             values=lvps,
-#     #             vs30=vs30,
-#     #             agg=agg,
-#     #             imt=val,
-#     #             hazard_model_id=HAZARD_MODEL_ID,
-#     #         ).set_location(loc)
 
 
 @pytest.fixture(scope="module")
