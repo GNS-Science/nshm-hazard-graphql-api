@@ -1,7 +1,7 @@
 """Tests for toshi_hazard_rev module."""
 
 import unittest
-from datetime import datetime as dt
+import datetime
 from nzshm_common.grids import RegionGrid
 from nzshm_common.geometry.geometry import create_square_tile
 
@@ -35,7 +35,7 @@ class TestGriddedHazard(unittest.TestCase):
         grid = region_grid.load()
         geometry = []
 
-        t0 = dt.utcnow()
+        t0 = datetime.datetime.now(datetime.UTC)
 
         # build the hazard_map
         for pt in grid:
@@ -44,7 +44,7 @@ class TestGriddedHazard(unittest.TestCase):
                 location=(pt[1], pt[0]),
             )
             geometry.append(tile)
-        print('built %s tiles in %s' % (len(geometry), dt.utcnow() - t0))
+        print('built %s tiles in %s' % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
 
         nz_parts = nz_simplified_polygons()
 
@@ -62,6 +62,6 @@ class TestGriddedHazard(unittest.TestCase):
 
         # for pt in grid:
         #     geometry.append(create_square_tile(region_grid.resolution, pt[1], pt[0]))
-        # print('built %s wlg tiles in %s' % (len(geometry), dt.utcnow() - t0))
+        # print('built %s wlg tiles in %s' % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
         # print(nzdf)
         # assert 0

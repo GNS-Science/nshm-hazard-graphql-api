@@ -1,10 +1,10 @@
 """Build Gridded Hazard."""
 
+import datetime
 import json
 import logging
 import math
 import os
-from datetime import datetime as dt
 from functools import lru_cache
 from typing import Iterable, Tuple, Union
 
@@ -91,14 +91,14 @@ def get_colour_values(
 @lru_cache
 def get_tile_polygons(grid_id: str) -> Tuple[CustomPolygon, ...]:
     # build the hazard_map
-    t0 = dt.utcnow()
+    t0 = datetime.datetime.now(datetime.UTC)
     region_grid = RegionGrid[grid_id]
     grid = region_grid.load()
     geometry = []
     for idx, pt in enumerate(grid):
         tile = CustomPolygon(create_square_tile(region_grid.resolution, pt[1], pt[0]), location=(pt[1], pt[0]))
         geometry.append(tile)
-    log.debug('built %s tiles in %s' % (len(geometry), dt.utcnow() - t0))
+    log.debug('built %s tiles in %s' % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
     return tuple(geometry)
 
 
@@ -137,7 +137,7 @@ def cacheable_hazard_map(
     stroke_opacity: float,
     stroke_width: float,
 ):
-    t0 = dt.utcnow()
+    t0 = datetime.datetime.now(datetime.UTC)
     log.info(
         'cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, agg: %s, hazard_model: %s, grid_id: %s'
         % (vs30, imt, poe, agg, hazard_model, grid_id)
@@ -156,12 +156,12 @@ def cacheable_hazard_map(
         'len(values) %s; len(polygons) %s; len(new_geometry) %s' % (len(values), len(polygons), len(new_geometry))
     )
 
-    t1 = dt.utcnow()
+    t1 = datetime.datetime.now(datetime.UTC)
     log.debug('time to build geometry of %s polygons took %s' % (len(new_geometry), (t1 - t0)))
 
     values = values_for_clipped_tiles(new_geometry, polygons, values)
     assert len(new_geometry) == len(values)
-    t2 = dt.utcnow()
+    t2 = datetime.datetime.now(datetime.UTC)
     log.debug('values_for_clipped_tiles cache_info: %s' % str(values_for_clipped_tiles.cache_info()))
     log.debug('time to build %s values %s' % (len(values), (t2 - t1)))
 
@@ -175,12 +175,12 @@ def cacheable_hazard_map(
     log.debug('color_scale_normalise %s' % color_scale_normalise)
     color_values = get_colour_values(color_scale, color_scale_vmax, color_scale_vmin, color_scale_normalise, values)
 
-    t3 = dt.utcnow()
+    t3 = datetime.datetime.now(datetime.UTC)
     log.debug('cacheable_hazard_map colour map took  %s' % (t3 - t2))
     log.debug('get_colour_values cache_info: %s' % str(get_colour_values.cache_info()))
 
     colour_scale = get_colour_scale(color_scale, color_scale_normalise, vmax=color_scale_vmax, vmin=color_scale_vmin)
-    t4 = dt.utcnow()
+    t4 = datetime.datetime.now(datetime.UTC)
     log.debug('get_colour_scale took  %s' % (t4 - t3))
     log.debug('get_colour_scale cache_info: %s' % str(get_colour_scale.cache_info()))
 
@@ -203,10 +203,10 @@ def cacheable_hazard_map(
     # filter out polygons with missing values
     gdf = gdf[~gdf["value"].isnull()]
 
-    t5 = dt.utcnow()
+    t5 = datetime.datetime.now(datetime.UTC)
     log.debug('build geojson took  %s' % (t5 - t4))
 
-    t1 = dt.utcnow()
+    t1 = datetime.datetime.now(datetime.UTC)
     log.debug('cacheable_hazard_map took %s' % (t1 - t0))
     db_metrics.put_duration(__name__, 'cacheable_hazard_map', t1 - t0)
     return GeoJsonHazardMap(geojson=json.loads(gdf.to_json()), colour_scale=colour_scale)
@@ -242,7 +242,7 @@ class GriddedHazard(graphene.ObjectType):
 
     def resolve_hazard_map(root, info, **args):
         """Resolve gridded hazard to geojson with formatting options."""
-        t0 = dt.utcnow()
+        t0 = datetime.datetime.now(datetime.UTC)
         hazmap = cacheable_hazard_map(
             root.hazard_model,
             root.grid_id.name,
@@ -259,7 +259,7 @@ class GriddedHazard(graphene.ObjectType):
             stroke_opacity=args['stroke_opacity'],
             stroke_width=args['stroke_width'],
         )
-        t1 = dt.utcnow()
+        t1 = datetime.datetime.now(datetime.UTC)
         log.debug('cacheable_hazard_map cache_info: %s' % str(cacheable_hazard_map.cache_info()))
         db_metrics.put_duration(__name__, 'resolve_hazard_map', t1 - t0)
         return hazmap
@@ -294,7 +294,7 @@ def cacheable_gridded_hazard_query(
 
 def query_gridded_hazard(kwargs):
     """Run query against dynamoDB."""
-    t0 = dt.utcnow()
+    t0 = datetime.datetime.now(datetime.UTC)
     log.info('query_gridded_hazard args: %s' % kwargs)
 
     def build_hazard_from_query_response(result):
@@ -320,5 +320,5 @@ def query_gridded_hazard(kwargs):
     )
 
     res = GriddedHazardResult(ok=True, gridded_hazard=build_hazard_from_query_response(response))
-    db_metrics.put_duration(__name__, 'query_gridded_hazard', dt.utcnow() - t0)
+    db_metrics.put_duration(__name__, 'query_gridded_hazard', datetime.datetime.now(datetime.UTC) - t0)
     return res
