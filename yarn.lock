@@ -3429,7 +3429,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nshm-hazard-graphql-api@workspace:."
   dependencies:
-    serverless: "npm:^4.21.1"
+    serverless: "npm:^4.25.0"
     serverless-plugin-warmup: "npm:^8.3.0"
     serverless-python-requirements: "npm:^6.1.2"
     serverless-s3-local: "npm:^0.8.5"
@@ -3910,9 +3910,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serverless@npm:^4.21.1":
-  version: 4.21.1
-  resolution: "serverless@npm:4.21.1"
+"serverless@npm:^4.25.0":
+  version: 4.25.0
+  resolution: "serverless@npm:4.25.0"
   dependencies:
     axios: "npm:^1.12.1"
     axios-proxy-builder: "npm:^0.1.2"
@@ -3921,7 +3921,7 @@ __metadata:
   bin:
     serverless: run.js
     sls: run.js
-  checksum: 10c0/5d2a4f4a1b692b08c1ace0c88d369b141e0b586dcf4919425d41abfb17c8eb3ac1818ba2b0166ad832c492fbb5a4d06f930766ae5679f24d14f0603eebae1518
+  checksum: 10c0/bf621ce4bf31306e47843aa1ea3d63f68f9ec6dd9bc34edc93d21300a61382684aa594142522ab9a804b3118cd65ed1b987de8054e09c4ab5bd8c18a07e48194
   languageName: node
   linkType: hard
 
