@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2025-11-25
+
+### Changed
+ - updated to toshi-hazard-store 1.3.0
+ - numpy updated from 1.2.x -> 2.3.5
+ - latest library versions
+ - migrated utcnow calls to new API
+
 ## [0.3.0] - 2025-10-20
 
 ### Changed

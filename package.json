@@ -1,6 +1,6 @@
 {
   "name": "nshm-hazard-graphql-api",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A graphql API for NSHM hazard.",
   "scripts": {
     "sls_requirements_1": "serverless requirements clean",
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/GNS-Science/nshm-hazard-graphql-api#readme",
   "dependencies": {
-    "serverless": "^4.21.1",
+    "serverless": "^4.29.0",
     "serverless-plugin-warmup": "^8.3.0"
   },
   "devDependencies": {

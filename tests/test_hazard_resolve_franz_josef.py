@@ -6,9 +6,10 @@ from unittest import mock
 
 from nzshm_common.location import CodedLocation
 from nzshm_common.location.location import LOCATIONS_BY_ID
-from toshi_hazard_store import model
-import toshi_hazard_store.query
 
+# from toshi_hazard_store import model
+import toshi_hazard_store.query
+from toshi_hazard_store.query.datasets import AggregatedHazard
 
 HAZARD_MODEL_ID = 'GRIDDED_THE_NINTH'
 vs30s = [400]
@@ -25,17 +26,18 @@ locs = [
 
 
 def build_hazard_aggregation_models():
-    n_lvls = 29
-    lvps = list(map(lambda x: model.LevelValuePairAttribute(lvl=x / 1e3, val=(x / 1e6)), range(1, n_lvls)))
     for loc, vs30, agg in itertools.product(locs, vs30s, aggs):
         for imt, val in enumerate(imts):
-            yield model.HazardAggregation(
-                values=lvps,
+            yield AggregatedHazard(
+                compatable_calc_id="NZSHM22",
+                hazard_model_id=HAZARD_MODEL_ID,
+                nloc_001=loc.resample(0.001).code,
+                nloc_0=loc.resample(1).code,
+                imt=imt,
                 vs30=vs30,
                 agg=agg,
-                imt=val,
-                hazard_model_id=HAZARD_MODEL_ID,
-            ).set_location(loc)
+                values=[(x / 1000) for x in range(44)],
+            ).to_imt_values()
 
 
 @pytest.fixture
