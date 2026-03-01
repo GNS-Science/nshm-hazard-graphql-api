@@ -33,9 +33,7 @@ class TestHazardCurvesNamed:
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -79,9 +77,7 @@ class TestHazardCurvesNamed:
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -124,9 +120,7 @@ class TestHazardCurvesNamed:
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -170,9 +164,7 @@ class TestHazardCurvesNamed:
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']

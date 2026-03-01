@@ -32,7 +32,7 @@ class ColourScaleNormalise(graphene.Enum):
     LIN = "lin"
 
 
-COLOR_SCALE_NORMALISE_LOG = 'log' if os.getenv('COLOR_SCALE_NORMALISATION', '').upper() == 'LOG' else 'lin'
+COLOR_SCALE_NORMALISE_LOG = "log" if os.getenv("COLOR_SCALE_NORMALISATION", "").upper() == "LOG" else "lin"
 
 
 class HexRgbValueMapping(graphene.ObjectType):
@@ -75,7 +75,7 @@ def get_colour_values(
     values: Tuple[Union[float, None]],
 ) -> Iterable[str]:
     # grid colours
-    log.debug('color_scale_vmax: %s' % color_scale_vmax)
+    log.debug("color_scale_vmax: %s" % color_scale_vmax)
     norm = get_normaliser(color_scale_vmax, color_scale_vmin, color_scale_normalise)
     cmap = mpl.colormaps[color_scale]
     colors = []
@@ -96,9 +96,12 @@ def get_tile_polygons(grid_id: str) -> Tuple[CustomPolygon, ...]:
     grid = region_grid.load()
     geometry = []
     for idx, pt in enumerate(grid):
-        tile = CustomPolygon(create_square_tile(region_grid.resolution, pt[1], pt[0]), location=(pt[1], pt[0]))
+        tile = CustomPolygon(
+            create_square_tile(region_grid.resolution, pt[1], pt[0]),
+            location=(pt[1], pt[0]),
+        )
         geometry.append(tile)
-    log.debug('built %s tiles in %s' % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
+    log.debug("built %s tiles in %s" % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
     return tuple(geometry)
 
 
@@ -139,31 +142,31 @@ def cacheable_hazard_map(
 ):
     t0 = datetime.datetime.now(datetime.UTC)
     log.info(
-        'cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, agg: %s, hazard_model: %s, grid_id: %s'
+        "cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, agg: %s, hazard_model: %s, grid_id: %s"
         % (vs30, imt, poe, agg, hazard_model, grid_id)
     )
 
     nz_parts = nz_simplified_polygons()  # cached
-    log.debug('nz_simplified_polygons cache_info: %s' % str(nz_simplified_polygons.cache_info()))
+    log.debug("nz_simplified_polygons cache_info: %s" % str(nz_simplified_polygons.cache_info()))
 
     polygons = get_tile_polygons(grid_id)
-    log.debug('get_tile_polygon cache_info: %s' % str(get_tile_polygons.cache_info()))
+    log.debug("get_tile_polygon cache_info: %s" % str(get_tile_polygons.cache_info()))
 
     new_geometry = clip_tiles(nz_parts, polygons)
-    log.debug('clip_tiles cache_info: %s' % str(clip_tiles.cache_info()))
+    log.debug("clip_tiles cache_info: %s" % str(clip_tiles.cache_info()))
 
     log.debug(
-        'len(values) %s; len(polygons) %s; len(new_geometry) %s' % (len(values), len(polygons), len(new_geometry))
+        "len(values) %s; len(polygons) %s; len(new_geometry) %s" % (len(values), len(polygons), len(new_geometry))
     )
 
     t1 = datetime.datetime.now(datetime.UTC)
-    log.debug('time to build geometry of %s polygons took %s' % (len(new_geometry), (t1 - t0)))
+    log.debug("time to build geometry of %s polygons took %s" % (len(new_geometry), (t1 - t0)))
 
     values = values_for_clipped_tiles(new_geometry, polygons, values)
     assert len(new_geometry) == len(values)
     t2 = datetime.datetime.now(datetime.UTC)
-    log.debug('values_for_clipped_tiles cache_info: %s' % str(values_for_clipped_tiles.cache_info()))
-    log.debug('time to build %s values %s' % (len(values), (t2 - t1)))
+    log.debug("values_for_clipped_tiles cache_info: %s" % str(values_for_clipped_tiles.cache_info()))
+    log.debug("time to build %s values %s" % (len(values), (t2 - t1)))
 
     color_scale_vmax = (
         color_scale_vmax
@@ -172,17 +175,17 @@ def cacheable_hazard_map(
     )
     color_scale_vmin = color_scale_vmin or min((v for v in values if v is not None), default=0)
 
-    log.debug('color_scale_normalise %s' % color_scale_normalise)
+    log.debug("color_scale_normalise %s" % color_scale_normalise)
     color_values = get_colour_values(color_scale, color_scale_vmax, color_scale_vmin, color_scale_normalise, values)
 
     t3 = datetime.datetime.now(datetime.UTC)
-    log.debug('cacheable_hazard_map colour map took  %s' % (t3 - t2))
-    log.debug('get_colour_values cache_info: %s' % str(get_colour_values.cache_info()))
+    log.debug("cacheable_hazard_map colour map took  %s" % (t3 - t2))
+    log.debug("get_colour_values cache_info: %s" % str(get_colour_values.cache_info()))
 
     colour_scale = get_colour_scale(color_scale, color_scale_normalise, vmax=color_scale_vmax, vmin=color_scale_vmin)
     t4 = datetime.datetime.now(datetime.UTC)
-    log.debug('get_colour_scale took  %s' % (t4 - t3))
-    log.debug('get_colour_scale cache_info: %s' % str(get_colour_scale.cache_info()))
+    log.debug("get_colour_scale took  %s" % (t4 - t3))
+    log.debug("get_colour_scale cache_info: %s" % str(get_colour_scale.cache_info()))
 
     gdf = gpd.GeoDataFrame(
         data=dict(
@@ -197,18 +200,22 @@ def cacheable_hazard_map(
         )
     )
     gdf = gdf.rename(
-        columns={'fill_opacity': 'fill-opacity', 'stroke_width': 'stroke-width', 'stroke_opacity': 'stroke-opacity'}
+        columns={
+            "fill_opacity": "fill-opacity",
+            "stroke_width": "stroke-width",
+            "stroke_opacity": "stroke-opacity",
+        }
     )
 
     # filter out polygons with missing values
     gdf = gdf[~gdf["value"].isnull()]
 
     t5 = datetime.datetime.now(datetime.UTC)
-    log.debug('build geojson took  %s' % (t5 - t4))
+    log.debug("build geojson took  %s" % (t5 - t4))
 
     t1 = datetime.datetime.now(datetime.UTC)
-    log.debug('cacheable_hazard_map took %s' % (t1 - t0))
-    db_metrics.put_duration(__name__, 'cacheable_hazard_map', t1 - t0)
+    log.debug("cacheable_hazard_map took %s" % (t1 - t0))
+    db_metrics.put_duration(__name__, "cacheable_hazard_map", t1 - t0)
     return GeoJsonHazardMap(geojson=json.loads(gdf.to_json()), colour_scale=colour_scale)
 
 
@@ -229,13 +236,13 @@ class GriddedHazard(graphene.ObjectType):
     hazard_map = graphene.Field(
         GeoJsonHazardMap,
         # Extra args
-        color_scale=graphene.String(default_value='jet', required=False),
+        color_scale=graphene.String(default_value="jet", required=False),
         color_scale_vmax=graphene.Float(required=False),
         color_scale_vmin=graphene.Float(default_value=0.0, required=False),
         color_scale_normalise=graphene.Argument(ColourScaleNormalise, required=False),
-        stroke_width=graphene.Float(default_value='0.1', required=False),
-        stroke_opacity=graphene.Float(default_value='1.0', required=False),
-        fill_opacity=graphene.Float(default_value='1.0', required=False),
+        stroke_width=graphene.Float(default_value="0.1", required=False),
+        stroke_opacity=graphene.Float(default_value="1.0", required=False),
+        fill_opacity=graphene.Float(default_value="1.0", required=False),
     )
 
     grid_locations = graphene.List(GriddedLocation)
@@ -251,17 +258,17 @@ class GriddedHazard(graphene.ObjectType):
             root.agg,
             root.imt,
             tuple(root.values),
-            color_scale=args['color_scale'],
-            color_scale_vmax=args.get('color_scale_vmax'),
-            color_scale_vmin=args.get('color_scale_vmin'),
-            color_scale_normalise=args.get('color_scale_normalise', COLOR_SCALE_NORMALISE_LOG),
-            fill_opacity=args['fill_opacity'],
-            stroke_opacity=args['stroke_opacity'],
-            stroke_width=args['stroke_width'],
+            color_scale=args["color_scale"],
+            color_scale_vmax=args.get("color_scale_vmax"),
+            color_scale_vmin=args.get("color_scale_vmin"),
+            color_scale_normalise=args.get("color_scale_normalise", COLOR_SCALE_NORMALISE_LOG),
+            fill_opacity=args["fill_opacity"],
+            stroke_opacity=args["stroke_opacity"],
+            stroke_width=args["stroke_width"],
         )
         t1 = datetime.datetime.now(datetime.UTC)
-        log.debug('cacheable_hazard_map cache_info: %s' % str(cacheable_hazard_map.cache_info()))
-        db_metrics.put_duration(__name__, 'resolve_hazard_map', t1 - t0)
+        log.debug("cacheable_hazard_map cache_info: %s" % str(cacheable_hazard_map.cache_info()))
+        db_metrics.put_duration(__name__, "resolve_hazard_map", t1 - t0)
         return hazmap
 
 
@@ -272,30 +279,38 @@ class GriddedHazardResult(graphene.ObjectType):
 
 @lru_cache
 def cacheable_gridded_hazard_query(
-    hazard_model_id: str, location_grid_id: str, vs30: int, imt: str, agg: str, poe: float
+    hazard_model_id: str,
+    location_grid_id: str,
+    vs30: int,
+    imt: str,
+    agg: str,
+    poe: float,
 ):
-
-    log.debug(
-        'cacheable_gridded_hazard_query with %s %s %s %s %s %s'
+    log.info(
+        "cacheable_gridded_hazard_query with %s %s %s %s %s %s"
         % (hazard_model_id, location_grid_id, vs30, imt, agg, poe)
     )
-
-    return list(
-        query.get_one_gridded_hazard(
-            hazard_model_id,
-            location_grid_id,
-            vs30,
-            imt,
-            agg,
-            poe,
+    try:
+        res = list(
+            query.get_gridded_hazard(
+                location_grid_id=location_grid_id,
+                hazard_model_ids=[hazard_model_id],
+                vs30s=[vs30],
+                imts=[imt],
+                aggs=[agg],
+                poes=[poe],
+            )
         )
-    )
+    except Exception as err:
+        log.warning(err)
+        raise
+    return res[0]
 
 
 def query_gridded_hazard(kwargs):
     """Run query against dynamoDB."""
     t0 = datetime.datetime.now(datetime.UTC)
-    log.info('query_gridded_hazard args: %s' % kwargs)
+    log.info("query_gridded_hazard args: %s" % kwargs)
 
     def build_hazard_from_query_response(result):
         log.info("build_hazard_from_query_response %s" % result)
@@ -305,20 +320,21 @@ def query_gridded_hazard(kwargs):
                 hazard_model=obj.hazard_model_id,
                 vs30=obj.vs30,
                 imt=obj.imt,
-                agg=obj.agg,
+                agg=obj.aggr,
                 poe=obj.poe,
-                values=obj.grid_poes,
+                values=obj.accel_levels,
             )
 
+    valid_grid = kwargs["grid_id"]
     response = cacheable_gridded_hazard_query(
-        hazard_model_id=kwargs['hazard_model_id'],
-        location_grid_id=RegionGridEnum.get(kwargs['grid_id']).name,
-        vs30=kwargs['vs30'],
-        imt=kwargs['imt'],
-        agg=kwargs['agg'],
-        poe=kwargs['poe'],
+        hazard_model_id=kwargs["hazard_model_id"],
+        location_grid_id=valid_grid.name,
+        vs30=kwargs["vs30"],
+        imt=kwargs["imt"],
+        agg=kwargs["agg"],
+        poe=kwargs["poe"],
     )
 
-    res = GriddedHazardResult(ok=True, gridded_hazard=build_hazard_from_query_response(response))
-    db_metrics.put_duration(__name__, 'query_gridded_hazard', datetime.datetime.now(datetime.UTC) - t0)
+    res = GriddedHazardResult(ok=True, gridded_hazard=build_hazard_from_query_response([response]))
+    db_metrics.put_duration(__name__, "query_gridded_hazard", datetime.datetime.now(datetime.UTC) - t0)
     return res
