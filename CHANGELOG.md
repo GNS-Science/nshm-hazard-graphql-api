@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0] - 2026-03-02
+
+### Changed
+- Update to toshi-hazard-store 1.4.2 with new gridded API (replaces deprecated get_one_gridded_hazard)
+- Rename DATASET_AGGR_* env vars to THS_DATASET_AGGR_* for consistency
+- Add THS_DATASET_GRIDDED_URI configuration
+- Refactor tests from unittest to pytest with parquet fixtures
+- Remove mock-based testing in favor of fixture data
+
+### Added
+- .yarnrc.yml with node-modules linker (fixes serverless-wsgi local dev)
+- CLAUDE.md for AI assistant context
+- LLM session logging to .llm/log.jsonl
+
+### Removed
+- tox build environment (not needed for serverless deployment)
+- test_gridded_hazard_moto.py (no longer needed)
+
 ## [0.3.1] - 2025-11-25
 
 ### Changed

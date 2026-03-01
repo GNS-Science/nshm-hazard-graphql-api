@@ -175,7 +175,7 @@ functions:
         - '/lambda-entrypoint.sh'
 
     description: The graphql API of ${self:service}
-    memorySize: 4096 # optional, in MB, default is 1024
+    memorySize: 3008 # was previously 4096, but not currently supported (why not)
     timeout: 20 # optional, in seconds, default is 6
     events:
       - http:
