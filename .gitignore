@@ -121,3 +121,15 @@ ENV/
 
 # mkdocs build dir
 site/
+
+# LLM session files (ephemeral)
+.llm/.session
+
+# Yarn Berry cache
+.yarn/
+
+# Local config
+.safety-project.ini
+
+# Old/archived files
+.github/old_policy.json
