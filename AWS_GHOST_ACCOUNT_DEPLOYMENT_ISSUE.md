@@ -4,6 +4,8 @@
 
 The nshm-hazard-graphql-api service was deployed to an unintended AWS account (a recently created account) instead of the expected account `461564345538`.
 
+**Root cause (confirmed)**: A default AWS Provider configured via the Serverless Dashboard Web UI was pointing at the wrong AWS account. The Serverless Framework CLI used this Provider's credentials in preference to the GitHub Actions secrets, silently deploying to the wrong account. The GitHub secrets themselves were never changed or rotated incorrectly.
+
 ## Background
 
 ### Deployment Configuration
