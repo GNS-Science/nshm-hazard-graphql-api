@@ -47,7 +47,7 @@ loggers:
     propagate: no
 
   nshm_hazard_graphql_api:
-    level: DEBUG
+    level: INFO
     handlers: [console_handler]
     propagate: no
 

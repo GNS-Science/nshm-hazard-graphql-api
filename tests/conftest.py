@@ -10,9 +10,9 @@ from dotenv import find_dotenv, load_dotenv
 from toshi_hazard_store.query.datasets import AggregatedHazard
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def load_env():
-    env_file = find_dotenv('.env.tests')
+    env_file = find_dotenv(".env.tests")
     load_dotenv(env_file)
 
 
@@ -28,39 +28,42 @@ def aws_credentials():
     os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 
-HAZARD_MODEL_ID = 'GRIDDED_THE_THIRD'
+HAZARD_MODEL_ID = "GRIDDED_THE_THIRD"
 vs30s = [250, 350, 450]
-imts = ['PGA', 'SA(0.5)']
-aggs = ['mean', '0.10']
+imts = ["PGA", "SA(0.5)"]
+aggs = ["mean", "0.10"]
 
-wlg = LOCATIONS_BY_ID['WLG']
-dud = LOCATIONS_BY_ID['DUD']
+wlg = LOCATIONS_BY_ID["WLG"]
+dud = LOCATIONS_BY_ID["DUD"]
 locs = [
-    CodedLocation(wlg['latitude'], wlg['longitude'], 0.001),
-    CodedLocation(dud['latitude'], dud['longitude'], 0.001),
+    CodedLocation(wlg["latitude"], wlg["longitude"], 0.001),
+    CodedLocation(dud["latitude"], dud["longitude"], 0.001),
 ]
 
 
 @pytest.fixture(scope="module")
 def many_rlz_args():
     yield dict(
-        TOSHI_ID='FAk3T0sHi1D==',
+        TOSHI_ID="FAk3T0sHi1D==",
         vs30s=[250, 350, 450],
-        imts=['PGA', 'SA(0.5)'],
+        imts=["PGA", "SA(0.5)"],
         locs=[
-            CodedLocation(wlg['latitude'], wlg['longitude'], 0.001),
-            CodedLocation(dud['latitude'], dud['longitude'], 0.001),
+            CodedLocation(wlg["latitude"], wlg["longitude"], 0.001),
+            CodedLocation(dud["latitude"], dud["longitude"], 0.001),
         ],
         rlzs=[x for x in range(5)],
     )
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def mock_query_response(many_rlz_args, *args, **kwargs):
 
     def generator_fn():
         for loc, vs30, imt, agg in itertools.product(
-            many_rlz_args["locs"][:5], many_rlz_args["vs30s"], many_rlz_args["imts"], ['mean', 'cov', '0.95']
+            many_rlz_args["locs"][:5],
+            many_rlz_args["vs30s"],
+            many_rlz_args["imts"],
+            ["mean", "cov", "0.95"],
         ):
             yield AggregatedHazard(
                 compatable_calc_id="NZSHM22",
@@ -76,11 +79,37 @@ def mock_query_response(many_rlz_args, *args, **kwargs):
     yield generator_fn()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def graphql_client():
     yield Client(schema_root)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def locations():
     yield locs
+
+
+@pytest.fixture
+def gridded_hazard_fixtures(monkeypatch):
+    from pathlib import Path
+    import toshi_hazard_store.query.dataset_cache as dataset_cache
+    import toshi_hazard_store.model.gridded.gridded_hazard_pydantic as gridded_hazard_pydantic
+    from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard import (
+        cacheable_gridded_hazard_query,
+    )
+
+    fixture_dir = Path(__file__).parent / "fixtures" / "gridded_hazard" / "DS"
+
+    # Clear the lru_caches before setting up
+    dataset_cache.get_gridded_dataset.cache_clear()
+    cacheable_gridded_hazard_query.cache_clear()
+
+    # Set the config directly
+    monkeypatch.setattr(dataset_cache, "DATASET_GRIDDED_URI", str(fixture_dir.absolute()))
+    monkeypatch.setattr(gridded_hazard_pydantic, "DISABLE_GRIDDED_MODEL_VALIDATOR", True)
+
+    yield
+
+    # Clear caches after test
+    dataset_cache.get_gridded_dataset.cache_clear()
+    cacheable_gridded_hazard_query.cache_clear()

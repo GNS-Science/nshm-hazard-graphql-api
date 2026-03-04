@@ -4,9 +4,9 @@ import pytest
 import pathlib
 import json
 from nzshm_common.location import CodedLocation
-from toshi_hazard_store.query import datasets, hazard_query
+from toshi_hazard_store.query import datasets, hazard_query, dataset_cache
 
-fixture_path = pathlib.Path(__file__).parent / 'fixtures'
+fixture_path = pathlib.Path(__file__).parent / "fixtures"
 
 
 def hazard_graphql_query(model: str, imt: str, locn: list[str], aggr: str, vs30: int, strategy: str) -> str:
@@ -47,9 +47,9 @@ def hazard_graphql_query(model: str, imt: str, locn: list[str], aggr: str, vs30:
     """
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def json_hazard():
-    fxt = fixture_path / 'API_HAZAGG_SMALL.json'
+    fxt = fixture_path / "API_HAZAGG_SMALL.json"
     assert fxt.exists
     yield json.load(open(fxt))
 
@@ -57,19 +57,26 @@ def json_hazard():
 @pytest.fixture()
 def hazagg_fixture_fn(json_hazard):
     def fn(hazard_model, imt, nloc_001, agg, vs30):
-        curves = json_hazard['data']['hazard_curves']['curves']
+        curves = json_hazard["data"]["hazard_curves"]["curves"]
         """A test helper function"""
         nloc_0 = hazard_query.downsample_code(nloc_001, 0.1)
         for curve in curves:
             if (
-                curve['hazard_model'] == hazard_model
-                and curve['imt'] == imt
-                and curve['agg'] == agg
-                and curve['loc'] == nloc_0
-                and curve['vs30'] == vs30
+                curve["hazard_model"] == hazard_model
+                and curve["imt"] == imt
+                and curve["agg"] == agg
+                and curve["loc"] == nloc_0
+                and curve["vs30"] == vs30
             ):
                 return datasets.AggregatedHazard(
-                    'NZSHM22', hazard_model, nloc_001, nloc_0, imt, vs30, agg, curve['curve']['values']
+                    "NZSHM22",
+                    hazard_model,
+                    nloc_001,
+                    nloc_0,
+                    imt,
+                    vs30,
+                    agg,
+                    curve["curve"]["values"],
                 ).to_imt_values()
         return None
 
@@ -85,14 +92,15 @@ def dataset_locations():
 
 
 @pytest.mark.parametrize("vs30", [400, 1500])
-@pytest.mark.parametrize("strategy", ['d0', 'd1', 'd2'])
+@pytest.mark.parametrize("strategy", ["d0", "d1", "d2"])
 @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
 @pytest.mark.parametrize("aggr", ["mean"])
 def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fixture_fn, vs30, imt, aggr, strategy):
-    dspath = fixture_path / 'HAZAGG_SMALL'
+    dspath = fixture_path / "HAZAGG_SMALL"
     assert dspath.exists()
 
-    monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
+    monkeypatch.setattr(dataset_cache, "DATASET_AGGR_URI", str(dspath))
+    dataset_cache.get_dataset.cache_clear()
 
     model = "NSHM_v1.0.4"
     locn = "-41.300~174.800"
@@ -104,17 +112,16 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
 
     print(qry)
     executed = graphql_client.execute(qry)
-    res = executed['data']['hazard_curves']
+    res = executed["data"]["hazard_curves"]
 
-    assert res['ok'] is True
-    assert res['curves'][0]['hazard_model'] == expected.hazard_model_id
-    assert res['curves'][0]['imt'] == expected.imt
-    assert res['curves'][0]['vs30'] == expected.vs30
-    assert res['curves'][0]['agg'] == expected.agg
+    assert res["ok"] is True
+    assert res["curves"][0]["hazard_model"] == expected.hazard_model_id
+    assert res["curves"][0]["imt"] == expected.imt
+    assert res["curves"][0]["vs30"] == expected.vs30
+    assert res["curves"][0]["agg"] == expected.agg
 
     # # Check values from original DynamoDB table vs new aggregate pyarrow dataset.
-    for idx, value in enumerate(res['curves'][0]['curve']['values']):
-
+    for idx, value in enumerate(res["curves"][0]["curve"]["values"]):
         exp_value = expected.values[idx].val
         # exp_level = expected.values[idx].lvl
 
@@ -125,39 +132,41 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
 
 @pytest.mark.parametrize("locn", ["-48.000~180.000", "-41.123~177.230"])
 @pytest.mark.parametrize("vs30", [400, 1500])
-@pytest.mark.parametrize("strategy", ['d2'])
+@pytest.mark.parametrize("strategy", ["d2"])
 @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
 @pytest.mark.parametrize("aggr", ["mean"])
 def test_hazard_curve_query_data_missing(
     graphql_client, monkeypatch, hazagg_fixture_fn, locn, vs30, imt, aggr, strategy
 ):
-    dspath = fixture_path / 'HAZAGG_SMALL'
+    dspath = fixture_path / "HAZAGG_SMALL"
     assert dspath.exists()
 
-    monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
+    monkeypatch.setattr(dataset_cache, "DATASET_AGGR_URI", str(dspath))
+    dataset_cache.get_dataset.cache_clear()
 
     model = "NSHM_v1.0.4"
 
     qry = hazard_graphql_query(model, imt, f'["{locn}"]', aggr, vs30, strategy)
     executed = graphql_client.execute(qry)
 
-    data = executed['data']['hazard_curves']
-    assert data['ok'] is True
-    assert len(data['curves']) == 0
+    data = executed["data"]["hazard_curves"]
+    assert data["ok"] is True
+    assert len(data["curves"]) == 0
 
 
 @pytest.mark.parametrize("locn", ["-48.000~180.000"])
 @pytest.mark.parametrize("vs30", [400, 1500])
-@pytest.mark.parametrize("strategy", ['d2'])
+@pytest.mark.parametrize("strategy", ["d2"])
 @pytest.mark.parametrize("imt", ["PGA", "SA(0.5)"])
 @pytest.mark.parametrize("aggr", ["mean"])
 def test_hazard_curve_query_data_missing_for_one_location(
     graphql_client, monkeypatch, hazagg_fixture_fn, locn, vs30, imt, aggr, strategy
 ):
-    dspath = fixture_path / 'HAZAGG_SMALL'
+    dspath = fixture_path / "HAZAGG_SMALL"
     assert dspath.exists()
 
-    monkeypatch.setattr(datasets, 'DATASET_AGGR_URI', str(dspath))
+    monkeypatch.setattr(dataset_cache, "DATASET_AGGR_URI", str(dspath))
+    dataset_cache.get_dataset.cache_clear()
 
     model = "NSHM_v1.0.4"
     good_locn = "-41.300~174.800"
@@ -167,7 +176,7 @@ def test_hazard_curve_query_data_missing_for_one_location(
     qry = hazard_graphql_query(model, imt, locations, aggr, vs30, strategy)
     executed = graphql_client.execute(qry)
 
-    data = executed['data']['hazard_curves']
+    data = executed["data"]["hazard_curves"]
 
-    assert data['ok'] is True
-    assert len(data['curves']) == 1  # same as expected good_data
+    assert data["ok"] is True
+    assert len(data["curves"]) == 1  # same as expected good_data

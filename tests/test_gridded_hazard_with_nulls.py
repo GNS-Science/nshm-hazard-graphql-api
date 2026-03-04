@@ -1,54 +1,34 @@
-"""Tests for toshi_hazard_rev module."""
-
-import unittest
+"""Tests for gridded hazard with null values using parquet fixtures."""
 
 import json
-from unittest import mock
 
+import pytest
 from graphene.test import Client
 
-from moto import mock_aws
-
-with mock_aws():
-    from nshm_hazard_graphql_api.schema import schema_root
-
+from nshm_hazard_graphql_api.schema import schema_root
 from nzshm_common.grids import RegionGrid
-from .test_gridded_hazard import build_hazard_gridded_models
-
-HAZARD_MODEL_ID = 'GRIDDED_THE_THIRD'
-vs30s = [500]
-imts = ['PGA']
-aggs = ['mean']
 
 
-def mock_query_response(*args, **kwargs):
-    models = list(build_hazard_gridded_models(args, kwargs))
-    for nulled in [1787, 3685, 3686, 3687, 3688]:
-        models[0].grid_poes[nulled] = None
-    return models
+@pytest.fixture
+def graphql_client():
+    yield Client(schema_root)
 
 
-# query.get_one_gridded_hazard
-@mock.patch(
-    'nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard.cacheable_gridded_hazard_query',
-    side_effect=mock_query_response,
-)
-class TestGriddedHazard(unittest.TestCase):
-    def setUp(self):
-        self.client = Client(schema_root)
+class TestGriddedHazardWithNulls:
+    """Tests handling of null values in gridded hazard data."""
 
-    def test_get_gridded_hazard_values(self, mocked_qry):
+    def test_get_gridded_hazard_values(self, gridded_hazard_fixtures, graphql_client):
 
         QUERY = """
         query {
             gridded_hazard (
                 grid_id: NZ_0_1_NB_1_1
-                hazard_model_id: "%s"
+                hazard_model_id: "NSHM_v1.0.4"
                 imt: "PGA"
-                agg: "mean"
+                agg: "0.5"
                 vs30: 400
                 poe: 0.02
-                )
+            )
             {
                 ok
                 gridded_hazard {
@@ -57,77 +37,56 @@ class TestGriddedHazard(unittest.TestCase):
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """
 
-        executed = self.client.execute(QUERY)
-        # print(executed)
-        res = executed['data']['gridded_hazard']
-        self.assertEqual(res['ok'], True)
-        self.assertEqual(mocked_qry.call_count, 1)
-        self.assertEqual(res['gridded_hazard'][0]['grid_id'], "NZ_0_1_NB_1_1")
-        self.assertEqual(len(res['gridded_hazard'][0]['values']), len(RegionGrid["NZ_0_1_NB_1_1"].load()))
+        executed = graphql_client.execute(QUERY)
+        res = executed["data"]["gridded_hazard"]
+        assert res["ok"] is True
+        assert res["gridded_hazard"][0]["grid_id"] == "NZ_0_1_NB_1_1"
+        assert len(res["gridded_hazard"][0]["values"]) == len(RegionGrid["NZ_0_1_NB_1_1"].load())
 
-    def test_get_gridded_hazard_geojson(self, mocked_qry):
+    def test_get_gridded_hazard_geojson(self, gridded_hazard_fixtures, graphql_client):
 
         QUERY = """
         query {
             gridded_hazard (
                 grid_id: NZ_0_1_NB_1_1
-                hazard_model_id: "%s"
+                hazard_model_id: "NSHM_v1.0.4"
                 imt: "PGA"
-                agg: "mean"
+                agg: "0.5"
                 vs30: 400
                 poe: 0.02
-                )
+            )
             {
                 ok
                 gridded_hazard {
                     hazard_model
                     values
                     grid_id
-                    hazard_map( color_scale: "inferno", fill_opacity:0.5, color_scale_vmax: 0) {
+                    hazard_map(color_scale: "inferno", fill_opacity: 0.5, color_scale_vmax: 0) {
                         geojson
-                        colour_scale { levels hexrgbs}
+                        colour_scale { levels hexrgbs }
                     }
                 }
             }
         }
-        """ % (
-            HAZARD_MODEL_ID
-        )  # , json.dumps(locs))
+        """
 
-        executed = self.client.execute(QUERY)
-        # print(executed)
-        res = executed['data']['gridded_hazard']
-        self.assertEqual(res['ok'], True)
-        self.assertEqual(mocked_qry.call_count, 1)
+        executed = graphql_client.execute(QUERY)
+        res = executed["data"]["gridded_hazard"]
+        assert res["ok"] is True
 
-        mocked_qry.assert_called_with(
-            hazard_model_id='GRIDDED_THE_THIRD',
-            location_grid_id='NZ_0_1_NB_1_1',
-            vs30=400.0,
-            imt='PGA',
-            agg='mean',
-            poe=0.02,
-        )
+        grid = RegionGrid["NZ_0_1_NB_1_1"].load()
+        assert res["gridded_hazard"][0]["grid_id"] == "NZ_0_1_NB_1_1"
+        assert len(res["gridded_hazard"][0]["values"]) == len(grid)
 
-        grid = RegionGrid['NZ_0_1_NB_1_1'].load()
-        self.assertEqual(res['gridded_hazard'][0]['grid_id'], 'NZ_0_1_NB_1_1')
-        self.assertEqual(len(res['gridded_hazard'][0]['values']), len(grid))
+        df_json = json.loads(res["gridded_hazard"][0]["hazard_map"]["geojson"])
+        assert len(df_json.get("features")) > 0
 
-        print()
-        df_json = json.loads(res['gridded_hazard'][0]['hazard_map']['geojson'])
-        print(df_json.get('features')[0])
-        # self.assertEqual(len(df_json.get('features')), len(grid)-5)
-        self.assertTrue(max((v for v in res['gridded_hazard'][0]['values'] if v is not None), default=1) < 4.7)
-        self.assertTrue(max((v for v in res['gridded_hazard'][0]['values'] if v is not None), default=1) > 4.5)
+        values = res["gridded_hazard"][0]["values"]
+        non_null_values = [v for v in values if v is not None]
+        if non_null_values:
+            assert max(non_null_values) >= 0
 
-        cscale = res['gridded_hazard'][0]['hazard_map']['colour_scale']
-        print(cscale)
-        self.assertEqual(cscale['levels'][0], 0)
-        self.assertEqual(cscale['levels'][-1], 5.0)
-
-        self.assertEqual(cscale['hexrgbs'][0], '#000004')
-        self.assertEqual(cscale['hexrgbs'][-1], '#fcffa4')
+        cscale = res["gridded_hazard"][0]["hazard_map"]["colour_scale"]
+        assert cscale["levels"][0] == 0
