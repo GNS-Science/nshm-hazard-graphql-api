@@ -9,6 +9,7 @@ exclude-newer-span = "P1W"
 [options.exclude-newer-package]
 nzshm-common = false
 nzshm-model = false
+toshi-hazard-store = false
 
 [manifest]
 constraints = [{ name = "lance-namespace", specifier = "<0.6" }]

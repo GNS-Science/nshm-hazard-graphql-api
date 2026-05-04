@@ -6,7 +6,8 @@
     "sls_requirements_1": "serverless requirements clean",
     "sls_requirements_2": "serverless requirements cleanCache",
     "sls_doctor": "serverless doctor",
-    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}"
+    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}",
+    "smoke": "uv run python scripts/smoke_test.py"
   },
   "repository": {
     "type": "git",
