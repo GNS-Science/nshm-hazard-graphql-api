@@ -36,7 +36,8 @@
     "@smithy/config-resolver": "4.4.17",
     "axios": "1.15.2",
     "follow-redirects": "1.16.0",
-    "lodash": "4.18.1"
+    "lodash": "4.18.1",
+    "@koa/router": "15.4.0"
   },
   "packageManager": "yarn@4.14.1"
 }
