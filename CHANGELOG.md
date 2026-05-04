@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- deps (yarn): patch (2 transitive), minor (2 direct: serverless 4.29→4.34, serverless-plugin-warmup 8.3→8.4; 4 transitive)
+- deps (yarn): major transitives — @koa/router 9→15, brace-expansion 2→5, fast-xml-parser 3→5, glob 7→13, koa 2→3, minimatch 9→10, rimraf 3→6, uuid 9→14
+- yarn lockfile migrated to v9; configured npmMinimalAgeGate 7d
+
 ## [0.4.0] - 2026-03-02
 
 ### Changed
