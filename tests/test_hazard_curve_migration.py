@@ -1,10 +1,11 @@
 """tests to show that the dataset query drop-in replacement for the dynamodb query works OK"""
 
-import pytest
-import pathlib
 import json
+import pathlib
+
+import pytest
 from nzshm_common.location import CodedLocation
-from toshi_hazard_store.query import datasets, hazard_query, dataset_cache
+from toshi_hazard_store.query import dataset_cache, datasets, hazard_query
 
 fixture_path = pathlib.Path(__file__).parent / "fixtures"
 
@@ -125,7 +126,7 @@ def test_hazard_curve_query_using_dataset(graphql_client, monkeypatch, hazagg_fi
         exp_value = expected.values[idx].val
         # exp_level = expected.values[idx].lvl
 
-        print(f"testing idx: {idx} res_value: {value}" f" expected_value: {exp_value}. diff: {exp_value - value}")
+        print(f"testing idx: {idx} res_value: {value} expected_value: {exp_value}. diff: {exp_value - value}")
         assert value == pytest.approx(exp_value, abs=7e5 - 8)
         # assert value.lvl == exp_level
 

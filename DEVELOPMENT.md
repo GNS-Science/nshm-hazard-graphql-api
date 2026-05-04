@@ -12,8 +12,8 @@ This application uses serverless.com.
 
 ```bash
 pyenv local 3.12
-poetry env use 3.12
-poetry install
+uv python pin 3.12
+uv sync
 ```
 
 - Setup Yarn Berry (node-modules linker is required for serverless-wsgi local dev):
@@ -81,11 +81,11 @@ Short-term credentials should be configured as a named profile in `~/.aws/creden
 ### API feature tests
 
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 ### Run API locally
 
 ```bash
-ENABLE_METRICS=0 poetry run yarn sls wsgi serve
+ENABLE_METRICS=0 uv run yarn sls wsgi serve
 ```

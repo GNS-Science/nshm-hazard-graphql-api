@@ -58,7 +58,7 @@ class QueryRoot(graphene.ObjectType):
     )
 
     def resolve_gridded_location(root, info, **kwargs):
-        log.info("resolve_gridded_location kwargs %s" % kwargs)
+        log.info(f"resolve_gridded_location kwargs {kwargs}")
         grid_loc = CodedLocation(kwargs['lat'], kwargs['lon'], kwargs['resolution'])
         return GriddedLocationResult(
             location=GriddedLocation(
@@ -68,11 +68,11 @@ class QueryRoot(graphene.ObjectType):
         )
 
     def resolve_gridded_hazard(root, info, **kwargs):
-        log.info("resolve_gridded_hazard kwargs %s" % kwargs)
+        log.info(f"resolve_gridded_hazard kwargs {kwargs}")
         return query_gridded_hazard(kwargs)
 
     def resolve_hazard_curves(root, info, **kwargs):
-        log.info("resolve_hazard_curves kwargs %s" % kwargs)
+        log.info(f"resolve_hazard_curves kwargs {kwargs}")
         return hazard_curves.hazard_curves(kwargs)
 
     def resolve_about(root, info, **args):

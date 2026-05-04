@@ -1,8 +1,8 @@
 """Build Hazard curves from the old dynamoDB models."""
 
 import logging
+from collections.abc import Iterator
 from datetime import datetime as dt
-from typing import Iterator
 
 from nzshm_common.location import CodedLocation, location
 

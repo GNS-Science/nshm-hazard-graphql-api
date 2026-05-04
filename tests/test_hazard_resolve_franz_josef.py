@@ -1,14 +1,14 @@
 """Tests for toshi_hazard_rev module."""
 
 import itertools
-import pytest
 from unittest import mock
 
-from nzshm_common.location import CodedLocation
-from nzshm_common.location.location import LOCATIONS_BY_ID
+import pytest
 
 # from toshi_hazard_store import model
 import toshi_hazard_store.query
+from nzshm_common.location import CodedLocation
+from nzshm_common.location.location import LOCATIONS_BY_ID
 from toshi_hazard_store.query.datasets import AggregatedHazard
 
 HAZARD_MODEL_ID = 'GRIDDED_THE_NINTH'
@@ -27,7 +27,7 @@ locs = [
 
 def build_hazard_aggregation_models():
     for loc, vs30, agg in itertools.product(locs, vs30s, aggs):
-        for imt, val in enumerate(imts):
+        for imt, _val in enumerate(imts):
             yield AggregatedHazard(
                 compatable_calc_id="NZSHM22",
                 hazard_model_id=HAZARD_MODEL_ID,
@@ -51,27 +51,27 @@ class TestHazardCurvesNamedFrznJosef:
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             hazard_curves (
                 locs: ["srg_164"]
-                hazard_model: "%s"
+                hazard_model: "{HAZARD_MODEL_ID}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
+                    }}
+                }}
+            }}
+        }}
+        """  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -95,28 +95,28 @@ class TestHazardCurvesNamedFrznJosef:
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             hazard_curves (
                 locs: ["srg_164"]
-                hazard_model: "%s"
+                hazard_model: "{HAZARD_MODEL_ID}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 resolution: 0.1
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
+                    }}
+                }}
+            }}
+        }}
+        """  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -138,28 +138,28 @@ class TestHazardCurvesNamedFrznJosef:
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             hazard_curves (
                 locs: ["-43.376~170.188"]
-                hazard_model: "%s"
+                hazard_model: "{HAZARD_MODEL_ID}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 resolution: 0.001
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
+                    }}
+                }}
+            }}
+        }}
+        """  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -181,27 +181,27 @@ class TestHazardCurvesNamedFrznJosef:
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             hazard_curves (
                 locs: ["-43.376~170.188"]
-                hazard_model: "%s"
+                hazard_model: "{HAZARD_MODEL_ID}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
+                    }}
+                }}
+            }}
+        }}
+        """  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -223,28 +223,28 @@ class TestHazardCurvesNamedFrznJosef:
         mocked_qry = mock.Mock(return_value=mock_query_response)
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             hazard_curves (
                 locs: ["-43.376~170.188"]
-                hazard_model: "%s"
+                hazard_model: "{HAZARD_MODEL_ID}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 resolution: 0.1
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % (HAZARD_MODEL_ID)  # , json.dumps(locs))
+                    }}
+                }}
+            }}
+        }}
+        """  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']

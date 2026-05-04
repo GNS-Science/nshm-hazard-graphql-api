@@ -16,7 +16,6 @@ Hopefully logging output from this modulw will aid in diagnosing such issues in 
 import importlib.util
 import logging
 import sys
-from typing import List, Union
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -26,21 +25,21 @@ log = logging.getLogger(__name__)
 def check_import(name: str):
     spec = importlib.util.find_spec(name)
     if spec:
-        log.info('module %s has spec" %s ' % (name, spec))
+        log.info(f'module {name} has spec" {spec} ')
     else:
-        log.warning('unable to find_spec for module %s' % name)
+        log.warning(f'unable to find_spec for module {name}')
         return
 
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
     if spec.loader:
         spec.loader.exec_module(module)
-        log.info('library: "%s" has version: %s' % (name, module.__version__))
+        log.info(f'library: "{name}" has version: {module.__version__}')
     else:
-        log.warning('unable to find loader for spec %s' % name)
+        log.warning(f'unable to find loader for spec {name}')
 
 
-def log_library_info(lib_names: Union[List[str], None] = None):
+def log_library_info(lib_names: list[str] | None = None):
     lib_names = lib_names or ['botocore', 'boto3']
     for name in lib_names:
         check_import(name)

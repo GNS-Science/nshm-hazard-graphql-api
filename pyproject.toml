@@ -1,95 +1,85 @@
 [project]
 name = "nshm-hazard-graphql-api"
 version = "0.4.0"
-homepage = "https://github.com/gns-science/nshm-hazard-graphql-api"
 description = "A Grapql API for NZHSM Hazard.."
 authors = [
-    {name = "Chris B Chamberlain",email = "chrisbc@artisan.co.nz"},
-    {name="NSHM Compute Working Group", email="nshm@gns.cri.nz"}
+    {name = "Chris B Chamberlain", email = "chrisbc@artisan.co.nz"},
+    {name = "NSHM Compute Working Group", email = "nshm@gns.cri.nz"},
 ]
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = "AGPL-3.0-or-later"
-classifiers=[
-    'Development Status :: 2 - Pre-Alpha',
-    'Intended Audience :: Developers',
-    'Natural Language :: English',
-    'Programming Language :: Python :: 3.12',
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.12",
 ]
-packages = [
-    { include = "nshm_hazard_graphql_api" },
-    { include = "tests", format = "sdist" },
+dependencies = [
+    "boto3>=1.24.57",
+    "flask>=3.0.3",
+    "flask-cors>=6.0",
+    "geopandas>=1.0.1",
+    "graphene>=3.3",
+    "graphql-server==3.0.0b7",
+    "matplotlib>=3.10.3",
+    "nzshm-common>=0.8.4",
+    "nzshm-model>=0.13.6",
+    "pyproj>=3.7.2",
+    "python-dateutil>=2.8.2",
+    "python-dotenv>=1.1.0",
+    "pyyaml>=6.0.1",
+    "serverless-wsgi>=3.0.5",
+    "toshi-hazard-store>=1.4.2",
 ]
 
-dependencies = [
-    "boto3 (>=1.24.57)",
-    "flask (>=3.0.3)",
-    "flask-cors (>=6.0)",
-    "geopandas (>=1.0.1)",
-    "graphene (>=3.3)",
-    "graphql-server (==3.0.0b7)",
-    "matplotlib (>=3.10.3)",
-    "nzshm-common (>=0.8.4)",
-    "nzshm-model (>=0.13.6)",
-    "pyproj (>=3.7.2)",
-    "python-dateutil (>=2.8.2)",
-    "python-dotenv (>=1.1.0)",
-    "pyyaml (>=6.0.1)",
-    "serverless-wsgi (>=3.0.5)",
-    "toshi-hazard-store (>=1.4.2)",
-]
+[project.urls]
+homepage = "https://github.com/gns-science/nshm-hazard-graphql-api"
 
 [dependency-groups]
 dev = [
-    "black",
     "bump2version",
-    "flake8-docstrings",
-    "flake8",
-    "isort",
-    "moto (>=5.1)",
+    "moto>=5.1",
     "mypy",
     "pip-audit",
     "pre-commit",
-    "pytest-cov",
     "pytest",
+    "pytest-cov",
+    "ruff",
     "safety",
     "sgqlc",
     "tox",
+    "tox-uv",
     "types-python-dateutil",
     "types-pyyaml",
 ]
 
-[tool.black]
-line-length = 120
-skip-string-normalization = true
-target-version = ['py37', 'py38', 'py39']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[tool.uv]
+exclude-newer = "1 week"
+exclude-newer-package = { "nzshm-common" = false, "nzshm-model" = false }
+constraint-dependencies = ["lance-namespace<0.6"]
 
-[tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
-line_length = 120
-skip_gitignore = true
-# you can skip files as below
-#skip_glob = docs/conf.py
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "preserve"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["nshm_hazard_graphql_api"]
+
+[tool.hatch.build.targets.sdist]
+include = ["nshm_hazard_graphql_api", "tests"]
 
 [build-system]
-requires = ["poetry-core>=2.2"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

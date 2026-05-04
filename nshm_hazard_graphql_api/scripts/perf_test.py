@@ -142,7 +142,6 @@ def run_test(
     click.echo('curves\tvs30\tlocation\ttype\tduration (s)\tresult')
 
     for loc, vs30, strategy in itertools.product(locs, vs30s, strategies):
-
         vars = dynamo_wlg.copy()
 
         vars['vs30s'] = [vs30]

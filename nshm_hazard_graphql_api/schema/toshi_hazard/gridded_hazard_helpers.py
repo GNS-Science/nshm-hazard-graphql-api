@@ -2,9 +2,9 @@ import datetime
 import io
 import logging
 import zipfile
+from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
-from typing import Iterable, Tuple, Union
 
 # from nzshm_grid_loc.io import load_polygon_file
 import geopandas as gpd
@@ -19,14 +19,14 @@ db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 
 
 class CustomPolygon:
-    def __init__(self, polygon: Polygon, location: Tuple[float, float]):
+    def __init__(self, polygon: Polygon, location: tuple[float, float]):
         self._polygon = polygon
         self._location = location
 
     def polygon(self) -> Polygon:
         return self._polygon
 
-    def location(self) -> Tuple[float, float]:
+    def location(self) -> tuple[float, float]:
         return self._location
 
     def __hash__(self):
@@ -57,12 +57,12 @@ def edge_tiles(clipping_parts: Iterable[CustomPolygon], tiles: Iterable[CustomPo
                     if not clipped.polygon().geom_type == 'Point':
                         yield clipped
                     else:
-                        raise RuntimeError("Clipped tile %s is not a Polygon" % (repr(clipped.polygon())))
+                        raise RuntimeError(f"Clipped tile {repr(clipped.polygon())} is not a Polygon")
                 except Exception as err:
-                    log.warning("edge_tiles raised error: %s" % err)
+                    log.warning(f"edge_tiles raised error: {err}")
 
 
-def load_zip(file_name: str) -> Tuple[str, io.BytesIO]:
+def load_zip(file_name: str) -> tuple[str, io.BytesIO]:
     """
     Extracts a file from a zip file. The file that is extracted must have a file name equal to the name of the zip file
     minus '.zip'
@@ -94,7 +94,7 @@ def load_polygon_file(file_name: str) -> gpd.GeoDataFrame:
     :param file_name: path to a geometry file
     :return: a GeoDataFrame
     """
-    file: Union[str, io.BytesIO] = file_name
+    file: str | io.BytesIO = file_name
     if file_name.endswith('.zip'):
         file_name, file = load_zip(file_name)
 
@@ -105,7 +105,7 @@ def load_polygon_file(file_name: str) -> gpd.GeoDataFrame:
 
 
 @lru_cache
-def nz_simplified_polygons() -> Tuple[CustomPolygon, ...]:
+def nz_simplified_polygons() -> tuple[CustomPolygon, ...]:
 
     small_nz = Path(__file__).parent.parent.parent / 'resources' / 'small-nz.wkt.csv.zip'
     nzdf = load_polygon_file(str(small_nz))
@@ -120,7 +120,7 @@ def nz_simplified_polygons() -> Tuple[CustomPolygon, ...]:
 
 
 @lru_cache
-def clip_tiles(clipping_parts: Tuple[CustomPolygon], tiles: Tuple[CustomPolygon]):
+def clip_tiles(clipping_parts: tuple[CustomPolygon], tiles: tuple[CustomPolygon]):
     t0 = datetime.datetime.now(datetime.UTC)
     covered_tiles = set(inner_tiles(clipping_parts, tiles))
     db_metrics.put_duration(__name__, 'filter_inner_tiles', datetime.datetime.now(datetime.UTC) - t0)
@@ -131,13 +131,9 @@ def clip_tiles(clipping_parts: Tuple[CustomPolygon], tiles: Tuple[CustomPolygon]
     clipped_tiles = set(edge_tiles(clipping_parts, outer_tiles))
     db_metrics.put_duration(__name__, 'clip_outer_tiles', datetime.datetime.now(datetime.UTC) - t0)
 
+    log.info(f'filtered {len(tiles)} tiles to {len(covered_tiles)} inner in {datetime.datetime.now(datetime.UTC) - t0}')
     log.info(
-        'filtered %s tiles to %s inner in %s'
-        % (len(tiles), len(covered_tiles), datetime.datetime.now(datetime.UTC) - t0)
-    )
-    log.info(
-        'clipped %s edge tiles to %s in %s'
-        % (len(outer_tiles), len(clipped_tiles), datetime.datetime.now(datetime.UTC) - t0)
+        f'clipped {len(outer_tiles)} edge tiles to {len(clipped_tiles)} in {datetime.datetime.now(datetime.UTC) - t0}'
     )
 
     new_geometry = covered_tiles.union(clipped_tiles)
