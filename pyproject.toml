@@ -56,7 +56,7 @@ dev = [
 
 [tool.uv]
 exclude-newer = "1 week"
-exclude-newer-package = { "nzshm-common" = false, "nzshm-model" = false }
+exclude-newer-package = { "nzshm-common" = false, "nzshm-model" = false, "toshi-hazard-store" = false }
 constraint-dependencies = ["lance-namespace<0.6"]
 
 [tool.ruff]
