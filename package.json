@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/GNS-Science/nshm-hazard-graphql-api#readme",
   "dependencies": {
-    "serverless": "^4.29.0",
-    "serverless-plugin-warmup": "^8.3.0"
+    "serverless": "4.34.0",
+    "serverless-plugin-warmup": "8.4.1"
   },
   "devDependencies": {
     "serverless-python-requirements": "^6.1.2",
@@ -32,7 +32,11 @@
   },
   "resolutions": {
     "@hapi/content": "6.0.1",
-    "dicer": "0.3.1"
+    "dicer": "0.3.1",
+    "@smithy/config-resolver": "4.4.17",
+    "axios": "1.15.2",
+    "follow-redirects": "1.16.0",
+    "lodash": "4.18.1"
   },
   "packageManager": "yarn@4.14.1"
 }
