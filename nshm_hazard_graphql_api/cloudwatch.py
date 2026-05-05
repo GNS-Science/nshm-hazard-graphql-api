@@ -44,4 +44,4 @@ class ServerlessMetricWriter:
         if ENABLE_METRICS:
             self._client.put_metric_data(**rec)
         else:
-            log.info(f"{self._metric_name} `{package}:{operation}` value: {duration} milliseconds.")
+            log.info("%s `%s:%s` value: %s milliseconds.", self._metric_name, package, operation, duration)

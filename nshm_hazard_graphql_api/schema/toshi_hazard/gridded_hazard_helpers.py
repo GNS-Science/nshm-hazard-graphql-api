@@ -59,7 +59,7 @@ def edge_tiles(clipping_parts: Iterable[CustomPolygon], tiles: Iterable[CustomPo
                     else:
                         raise RuntimeError(f"Clipped tile {repr(clipped.polygon())} is not a Polygon")
                 except Exception as err:
-                    log.warning(f"edge_tiles raised error: {err}")
+                    log.warning("edge_tiles raised error: %s", err)
 
 
 def load_zip(file_name: str) -> tuple[str, io.BytesIO]:
@@ -131,9 +131,13 @@ def clip_tiles(clipping_parts: tuple[CustomPolygon], tiles: tuple[CustomPolygon]
     clipped_tiles = set(edge_tiles(clipping_parts, outer_tiles))
     db_metrics.put_duration(__name__, 'clip_outer_tiles', datetime.datetime.now(datetime.UTC) - t0)
 
-    log.info(f'filtered {len(tiles)} tiles to {len(covered_tiles)} inner in {datetime.datetime.now(datetime.UTC) - t0}')
     log.info(
-        f'clipped {len(outer_tiles)} edge tiles to {len(clipped_tiles)} in {datetime.datetime.now(datetime.UTC) - t0}'
+        'filtered %s tiles to %s inner in %s',
+        len(tiles), len(covered_tiles), datetime.datetime.now(datetime.UTC) - t0,
+    )
+    log.info(
+        'clipped %s edge tiles to %s in %s',
+        len(outer_tiles), len(clipped_tiles), datetime.datetime.now(datetime.UTC) - t0,
     )
 
     new_geometry = covered_tiles.union(clipped_tiles)

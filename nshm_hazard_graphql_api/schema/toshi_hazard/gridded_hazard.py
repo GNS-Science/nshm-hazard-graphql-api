@@ -75,7 +75,7 @@ def get_colour_values(
     values: tuple[float | None],
 ) -> Iterable[str]:
     # grid colours
-    log.debug(f"color_scale_vmax: {color_scale_vmax}")
+    log.debug("color_scale_vmax: %s", color_scale_vmax)
     norm = get_normaliser(color_scale_vmax, color_scale_vmin, color_scale_normalise)
     cmap = mpl.colormaps[color_scale]
     colors = []
@@ -101,7 +101,7 @@ def get_tile_polygons(grid_id: str) -> tuple[CustomPolygon, ...]:
             location=(pt[1], pt[0]),
         )
         geometry.append(tile)
-    log.debug(f"built {len(geometry)} tiles in {datetime.datetime.now(datetime.UTC) - t0}")
+    log.debug("built %s tiles in %s", len(geometry), datetime.datetime.now(datetime.UTC) - t0)
     return tuple(geometry)
 
 
@@ -142,29 +142,30 @@ def cacheable_hazard_map(
 ):
     t0 = datetime.datetime.now(datetime.UTC)
     log.info(
-        f"cacheable_hazard_map() vs30: {vs30}, imt: {imt}, poe: {poe}, "
-        f"agg: {agg}, hazard_model: {hazard_model}, grid_id: {grid_id}"
+        "cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, "
+        "agg: %s, hazard_model: %s, grid_id: %s",
+        vs30, imt, poe, agg, hazard_model, grid_id
     )
 
     nz_parts = nz_simplified_polygons()  # cached
-    log.debug(f"nz_simplified_polygons cache_info: {str(nz_simplified_polygons.cache_info())}")
+    log.debug("nz_simplified_polygons cache_info: %s", str(nz_simplified_polygons.cache_info()))
 
     polygons = get_tile_polygons(grid_id)
-    log.debug(f"get_tile_polygon cache_info: {str(get_tile_polygons.cache_info())}")
+    log.debug("get_tile_polygon cache_info: %s", str(get_tile_polygons.cache_info()))
 
     new_geometry = clip_tiles(nz_parts, polygons)
-    log.debug(f"clip_tiles cache_info: {str(clip_tiles.cache_info())}")
+    log.debug("clip_tiles cache_info: %s", str(clip_tiles.cache_info()))
 
-    log.debug(f"len(values) {len(values)}; len(polygons) {len(polygons)}; len(new_geometry) {len(new_geometry)}")
+    log.debug("len(values) %s; len(polygons) %s; len(new_geometry) %s", len(values), len(polygons), len(new_geometry))
 
     t1 = datetime.datetime.now(datetime.UTC)
-    log.debug(f"time to build geometry of {len(new_geometry)} polygons took {t1 - t0}")
+    log.debug("time to build geometry of %s polygons took %s", len(new_geometry), t1 - t0)
 
     values = values_for_clipped_tiles(new_geometry, polygons, values)
     assert len(new_geometry) == len(values)
     t2 = datetime.datetime.now(datetime.UTC)
-    log.debug(f"values_for_clipped_tiles cache_info: {str(values_for_clipped_tiles.cache_info())}")
-    log.debug(f"time to build {len(values)} values {t2 - t1}")
+    log.debug("values_for_clipped_tiles cache_info: %s", str(values_for_clipped_tiles.cache_info()))
+    log.debug("time to build %s values %s", len(values), t2 - t1)
 
     color_scale_vmax = (
         color_scale_vmax
@@ -173,17 +174,17 @@ def cacheable_hazard_map(
     )
     color_scale_vmin = color_scale_vmin or min((v for v in values if v is not None), default=0)
 
-    log.debug(f"color_scale_normalise {color_scale_normalise}")
+    log.debug("color_scale_normalise %s", color_scale_normalise)
     color_values = get_colour_values(color_scale, color_scale_vmax, color_scale_vmin, color_scale_normalise, values)
 
     t3 = datetime.datetime.now(datetime.UTC)
     log.debug("cacheable_hazard_map colour map took  %s" % (t3 - t2))
-    log.debug(f"get_colour_values cache_info: {str(get_colour_values.cache_info())}")
+    log.debug("get_colour_values cache_info: %s", str(get_colour_values.cache_info()))
 
     colour_scale = get_colour_scale(color_scale, color_scale_normalise, vmax=color_scale_vmax, vmin=color_scale_vmin)
     t4 = datetime.datetime.now(datetime.UTC)
     log.debug("get_colour_scale took  %s" % (t4 - t3))
-    log.debug(f"get_colour_scale cache_info: {str(get_colour_scale.cache_info())}")
+    log.debug("get_colour_scale cache_info: %s", str(get_colour_scale.cache_info()))
 
     gdf = gpd.GeoDataFrame(
         data=dict(
@@ -265,7 +266,7 @@ class GriddedHazard(graphene.ObjectType):
             stroke_width=args["stroke_width"],
         )
         t1 = datetime.datetime.now(datetime.UTC)
-        log.debug(f"cacheable_hazard_map cache_info: {str(cacheable_hazard_map.cache_info())}")
+        log.debug("cacheable_hazard_map cache_info: %s", str(cacheable_hazard_map.cache_info()))
         db_metrics.put_duration(__name__, "resolve_hazard_map", t1 - t0)
         return hazmap
 
@@ -284,7 +285,10 @@ def cacheable_gridded_hazard_query(
     agg: str,
     poe: float,
 ):
-    log.info(f"cacheable_gridded_hazard_query with {hazard_model_id} {location_grid_id} {vs30} {imt} {agg} {poe}")
+    log.info(
+        "cacheable_gridded_hazard_query with %s %s %s %s %s %s",
+        hazard_model_id, location_grid_id, vs30, imt, agg, poe,
+    )
     try:
         res = list(
             query.get_gridded_hazard(
@@ -305,10 +309,10 @@ def cacheable_gridded_hazard_query(
 def query_gridded_hazard(kwargs):
     """Run query against dynamoDB."""
     t0 = datetime.datetime.now(datetime.UTC)
-    log.info(f"query_gridded_hazard args: {kwargs}")
+    log.info("query_gridded_hazard args: %s", kwargs)
 
     def build_hazard_from_query_response(result):
-        log.info(f"build_hazard_from_query_response {result}")
+        log.info("build_hazard_from_query_response %s", result)
         for obj in result:
             yield GriddedHazard(
                 grid_id=RegionGridEnum[obj.location_grid_id],

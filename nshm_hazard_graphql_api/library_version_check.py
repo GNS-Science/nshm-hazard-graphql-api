@@ -25,18 +25,18 @@ log = logging.getLogger(__name__)
 def check_import(name: str):
     spec = importlib.util.find_spec(name)
     if spec:
-        log.info(f'module {name} has spec" {spec} ')
+        log.info('module %s has spec: %s ', name, spec)
     else:
-        log.warning(f'unable to find_spec for module {name}')
+        log.warning('unable to find_spec for module %s', name)
         return
 
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
     if spec.loader:
         spec.loader.exec_module(module)
-        log.info(f'library: "{name}" has version: {module.__version__}')
+        log.info('library: "%s" has version: %s', name, module.__version__)
     else:
-        log.warning(f'unable to find loader for spec {name}')
+        log.warning('unable to find loader for spec %s', name)
 
 
 def log_library_info(lib_names: list[str] | None = None):
