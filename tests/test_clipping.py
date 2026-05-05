@@ -1,10 +1,10 @@
 """Tests for toshi_hazard_rev module."""
 
-import unittest
 import datetime
-from nzshm_common.grids import RegionGrid
-from nzshm_common.geometry.geometry import create_square_tile
+import unittest
 
+from nzshm_common.geometry.geometry import create_square_tile
+from nzshm_common.grids import RegionGrid
 from shapely.geometry import Polygon
 
 from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
@@ -44,7 +44,7 @@ class TestGriddedHazard(unittest.TestCase):
                 location=(pt[1], pt[0]),
             )
             geometry.append(tile)
-        print('built %s tiles in %s' % (len(geometry), datetime.datetime.now(datetime.UTC) - t0))
+        print(f'built {len(geometry)} tiles in {datetime.datetime.now(datetime.UTC) - t0}')
 
         nz_parts = nz_simplified_polygons()
 

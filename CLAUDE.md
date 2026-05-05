@@ -16,8 +16,8 @@ This file provides project-specific context for AI assistants working on this co
 ```bash
 # Python
 pyenv local 3.12
-poetry env use 3.12
-poetry install
+uv python pin 3.12
+uv sync
 
 # Node/Yarn
 corepack enable
@@ -27,19 +27,17 @@ yarn install
 
 ### Testing
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 ### Run API Locally
 ```bash
-ENABLE_METRICS=0 poetry run yarn sls wsgi serve
+ENABLE_METRICS=0 uv run yarn sls wsgi serve
 ```
 
 ### Format & Lint
 ```bash
-poetry run black nshm_hazard_graphql_api tests
-poetry run isort nshm_hazard_graphql_api tests
-poetry run flake8 nshm_hazard_graphql_api tests
+uv run ruff format nshm_hazard_graphql_api tests
 ```
 
 ## Key Architecture

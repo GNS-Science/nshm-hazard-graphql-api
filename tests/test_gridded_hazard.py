@@ -204,28 +204,24 @@ class TestResolveArbitraryLocationToGridded:
     def test_get_gridded_location_with_off_grid_location(self, graphql_client, locations):
         """No mocking required."""
 
-        QUERY = """
-        query {
+        QUERY = f"""
+        query {{
             gridded_location (
-                lat: %s
-                lon: %s
-                resolution: %s
+                lat: {locations[0].lat}
+                lon: {locations[0].lon}
+                resolution: {0.1}
             )
-            {
+            {{
                 ok
-                location {
+                location {{
                     lat
                     lon
                     code
                     resolution
-                }
-            }
-        }
-        """ % (
-            locations[0].lat,
-            locations[0].lon,
-            0.1,
-        )
+                }}
+            }}
+        }}
+        """
 
         executed = graphql_client.execute(QUERY)
         res = executed["data"]["gridded_location"]

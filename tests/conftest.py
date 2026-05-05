@@ -1,13 +1,14 @@
 import itertools
 import os
-import pytest
-from graphene.test import Client
 
+import pytest
+from dotenv import find_dotenv, load_dotenv
+from graphene.test import Client
 from nzshm_common.location import CodedLocation
 from nzshm_common.location.location import LOCATIONS_BY_ID
-from nshm_hazard_graphql_api.schema import schema_root
-from dotenv import find_dotenv, load_dotenv
 from toshi_hazard_store.query.datasets import AggregatedHazard
+
+from nshm_hazard_graphql_api.schema import schema_root
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -92,8 +93,10 @@ def locations():
 @pytest.fixture
 def gridded_hazard_fixtures(monkeypatch):
     from pathlib import Path
-    import toshi_hazard_store.query.dataset_cache as dataset_cache
+
     import toshi_hazard_store.model.gridded.gridded_hazard_pydantic as gridded_hazard_pydantic
+    import toshi_hazard_store.query.dataset_cache as dataset_cache
+
     from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard import (
         cacheable_gridded_hazard_query,
     )

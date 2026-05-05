@@ -1,13 +1,13 @@
 """Tests for `nshm_hazard_graphql_api` package."""
 
 import unittest
-from graphene.test import Client
 
+from graphene.test import Client
 from moto import mock_aws
 
 with mock_aws():
-    from nshm_hazard_graphql_api.schema import schema_root
     from nshm_hazard_graphql_api.nshm_hazard_graphql_api import create_app
+    from nshm_hazard_graphql_api.schema import schema_root
 
 
 class TestFlaskApp(unittest.TestCase):

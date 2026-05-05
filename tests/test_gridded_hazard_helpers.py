@@ -1,13 +1,13 @@
 """Tests for gridded hazard helper functions."""
 
 import pytest
+from nzshm_common.grids import RegionGrid
 
+from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard import get_tile_polygons
 from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
     clip_tiles,
     nz_simplified_polygons,
 )
-from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard import get_tile_polygons
-from nzshm_common.grids import RegionGrid
 
 GRID = "NZ_0_1_NB_1_1"
 

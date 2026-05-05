@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- migrated to uv and ruff
+- dependency upgrades
+
 ## [0.4.0] - 2026-03-02
 
 ### Changed
