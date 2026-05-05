@@ -23,7 +23,7 @@ The other columns:
 ### July 3, 2025 lambda memory 4096 MB
 
 ```
->>> poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+>>> uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	WLG	dyn	0.827743	OK
 0	400	WLG	d2	0.241829	OK
@@ -99,7 +99,7 @@ using `toshi-hazard-store 1.1.2`
 removed WLG
 
 ```
-poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	-41.300~174.800	dyn	8.518689	OK
 80	400	-41.300~174.800	d2	7.873848	OK
@@ -120,7 +120,7 @@ curves	vs30	location	type	duration (s)	result
 ```
 
 ```
-poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	-41.300~174.800	dyn	10.37418	OK
 80	400	-41.300~174.800	d2	9.709453	OK
@@ -143,7 +143,7 @@ curves	vs30	location	type	duration (s)	result
 ### July 4, 2025 lambda memory 10240 MB
 
 ```
-poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	-41.300~174.800	dyn	13.115274	OK
 80	400	-41.300~174.800	d2	10.397033	OK
@@ -191,7 +191,7 @@ curves	vs30	location	type	duration (s)	result
 
 ### Local 
 
-chrisbc@MLX01 nshm-hazard-graphql-api % API_TOKEN=c0pWTQWUkl4bO1CvwYvWt85qiLfU6jwJ9DmQiKzW  poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+chrisbc@MLX01 nshm-hazard-graphql-api % API_TOKEN=c0pWTQWUkl4bO1CvwYvWt85qiLfU6jwJ9DmQiKzW  uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	-41.300~174.800	dyn	7.046493	OK
 80	400	WLG	dyn	4.09537	OK
@@ -199,7 +199,7 @@ curves	vs30	location	type	duration (s)	result
 #### With lru_cache on match_named_location_coord_code() 
 
 ```
-poetry run python nshm_hazard_graphql_api/scripts/perf_test.py
+uv run python nshm_hazard_graphql_api/scripts/perf_test.py
 curves	vs30	location	type	duration (s)	result
 80	400	-41.300~174.800	dyn	4.312123	OK
 80	400	-41.300~174.800	d2	2.172088	OK

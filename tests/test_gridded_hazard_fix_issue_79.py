@@ -4,13 +4,13 @@ import json
 
 import pytest
 from graphene.test import Client
+from nzshm_common.grids import RegionGrid
 
 from nshm_hazard_graphql_api.schema import schema_root
 from nshm_hazard_graphql_api.schema.toshi_hazard.gridded_hazard_helpers import (
     clip_tiles,
     nz_simplified_polygons,
 )
-from nzshm_common.grids import RegionGrid
 
 
 @pytest.fixture

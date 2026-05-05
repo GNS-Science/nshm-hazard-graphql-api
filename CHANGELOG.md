@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- migrated to uv and ruff
+- deps (yarn): major transitives — @koa/router 9→15, brace-expansion 2→5, fast-xml-parser 3→5, glob 7→13, koa 2→3, minimatch 9→10, rimraf 3→6, uuid 9→14
+
 ## [0.4.0] - 2026-03-02
 
 ### Changed

@@ -2,10 +2,9 @@
 
 from unittest import mock
 
+import toshi_hazard_store.query
 from nzshm_common.location import CodedLocation
 from nzshm_common.location.location import LOCATIONS_BY_ID
-
-import toshi_hazard_store.query
 
 
 class TestHazardCurves:
@@ -15,39 +14,39 @@ class TestHazardCurves:
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
-        query {
+        query {{
             hazard_curves (
-                hazard_model: "%s"
+                hazard_model: "{}"
                 imts: ["PGA", "SA(0.5)"]
                 locs: ["WLG", "DUD"]
                 aggs: ["mean", "0.005", "0.995", "0.1", "0.9"]
                 vs30s: [400, 250]
                 resolution: 0.01
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
                     imt
                     loc
                     agg
                     vs30
-                    # curve {
+                    # curve {{
                     #     levels
                     #     values
-                    # }
-                }
-                locations {
+                    # }}
+                }}
+                locations {{
                   lat
                   lon
                   resolution
                   code
                   name
                   key
-                }
-            }
-        }
-        """ % ("GRIDDED_THE_THIRD")  # , json.dumps(locs))
+                }}
+            }}
+        }}
+        """.format("GRIDDED_THE_THIRD")  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -86,39 +85,39 @@ class TestHazardCurves:
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
-        query {
+        query {{
             hazard_curves (
-                hazard_model: "%s"
+                hazard_model: "{}"
                 imts: ["PGA", "SA(0.5)"]
                 locs: ["WLG", "DUD"]
                 aggs: ["mean", "0.005", "0.995", "0.1", "0.9"]
                 vs30s: [400, 250]
                 # resolution: 0.1 #ignot
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
                     imt
                     loc
                     agg
                     vs30
-                    # curve {
+                    # curve {{
                     #     levels
                     #     values
-                    # }
-                }
-                locations {
+                    # }}
+                }}
+                locations {{
                   lat
                   lon
                   resolution
                   code
                   name
                   key
-                }
-            }
-        }
-        """ % ("GRIDDED_THE_THIRD")  # , json.dumps(locs))
+                }}
+            }}
+        }}
+        """.format("GRIDDED_THE_THIRD")  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -154,35 +153,35 @@ class TestHazardCurves:
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
-        query {
+        query {{
             hazard_curves (
                 locs: ["-41.30~174.78"]
-                hazard_model: "%s"
+                hazard_model: "{}"
                 imts: ["PGA"]
                 aggs: ["mean"]
                 vs30s: [400]
                 resolution: 0.01
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-                locations {
+                    }}
+                }}
+                locations {{
                   lat
                   lon
                   resolution
                   code
                   name
                   key
-                }
-            }
-        }
-        """ % ("HAZARD_THE_THIRD")  # , json.dumps(locs))
+                }}
+            }}
+        }}
+        """.format("HAZARD_THE_THIRD")  # , json.dumps(locs))
 
         executed = graphql_client.execute(QUERY)
         res = executed['data']['hazard_curves']
@@ -216,30 +215,30 @@ class TestHazardCurves:
         monkeypatch.setattr(toshi_hazard_store.query.datasets, 'get_hazard_curves', mocked_qry)
 
         QUERY = """
-        query {
+        query {{
             hazard_curves (
-                hazard_model: "%s"
+                hazard_model: "{}"
                 imts: ["PGA", "SA(0.5)"]
                 locs: ["-36.959~174.8080144"]
                 aggs: ["mean", "0.005", "0.995", "0.1", "0.9"]
                 vs30s: [400, 250]
                 )
-            {
+            {{
                 ok
-                curves {
+                curves {{
                     hazard_model
                     imt
                     loc
                     agg
                     vs30
-                    curve {
+                    curve {{
                         levels
                         values
-                    }
-                }
-            }
-        }
-        """ % ("GRIDDED_THE_THIRD",)
+                    }}
+                }}
+            }}
+        }}
+        """.format("GRIDDED_THE_THIRD")
 
         executed = graphql_client.execute(QUERY)
         print(executed)

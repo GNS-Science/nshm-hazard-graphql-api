@@ -2,8 +2,8 @@
 
 import datetime as dt
 import logging
+from collections.abc import Iterable, Iterator
 from functools import lru_cache
-from typing import Iterable, Iterator, Optional
 
 from nzshm_common.location import CodedLocation, location
 from toshi_hazard_store.query import datasets
@@ -17,7 +17,7 @@ db_metrics = ServerlessMetricWriter(metric_name="MethodDuration")
 
 
 @lru_cache
-def match_named_location_coord_code(location_code: str) -> Optional[GriddedLocation]:
+def match_named_location_coord_code(location_code: str) -> GriddedLocation | None:
     """Attempt to match a Named Location.
 
     If the provided coordinates match named_location, returns a complete GriddedLocation
@@ -27,7 +27,7 @@ def match_named_location_coord_code(location_code: str) -> Optional[GriddedLocat
     """
 
     resolution: float = 0.001
-    log.debug("match_named_location_coord_code %s res: %s" % (location_code, resolution))
+    log.debug("match_named_location_coord_code %s res: %s", location_code, resolution)
 
     tloc = CodedLocation(*[float(x) for x in location_code.split('~')], resolution)
 
@@ -80,7 +80,7 @@ def normalise_locations(locations: Iterable[str], resolution: float = 0.01) -> I
         # do these coordinates match a named location?, if so convert to the legit code.
         matched = match_named_location_coord_code(loc)
         if matched:
-            log.debug('normalise_locations got named location: %s code: %s' % (matched.name, matched.code))
+            log.debug('normalise_locations got named location: %s code: %s', matched.name, matched.code)
             yield matched
             continue
 
@@ -115,7 +115,7 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
             for obj in result:
                 named = match_named_location_coord_code(obj.nloc_001)
                 if named:
-                    log.debug('build_response_from_query got named location: %s' % named)
+                    log.debug('build_response_from_query got named location: %s', named)
                     loc_code = named.code
                 else:
                     # log.debug('resolve with : %s degrees of precision' % resolution)
@@ -156,6 +156,6 @@ def hazard_curves(kwargs: dict) -> ToshiHazardCurveResult:
     result = ToshiHazardCurveResult(ok=True, locations=gridded_locations, curves=curves)
 
     t1 = dt.datetime.now()
-    log.info(f"Executed dataset query for {len(curves)} curves in {(t1 - t0).total_seconds()} seconds.")
+    log.info("Executed dataset query for %s curves in %s seconds.", len(curves), (t1 - t0).total_seconds())
     db_metrics.put_duration(__name__, 'hazard_curves', (t1 - t0))
     return result

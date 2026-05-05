@@ -6,7 +6,8 @@
     "sls_requirements_1": "serverless requirements clean",
     "sls_requirements_2": "serverless requirements cleanCache",
     "sls_doctor": "serverless doctor",
-    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}"
+    "deploy": "BUILDX_NO_DEFAULT_ATTESTATIONS=1 serverless deploy --stage ${STAGE} --region ${REGION}",
+    "smoke": "uv run python scripts/smoke_test.py"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,8 @@
   },
   "homepage": "https://github.com/GNS-Science/nshm-hazard-graphql-api#readme",
   "dependencies": {
-    "serverless": "^4.29.0",
-    "serverless-plugin-warmup": "^8.3.0"
+    "serverless": "4.34.0",
+    "serverless-plugin-warmup": "8.4.1"
   },
   "devDependencies": {
     "serverless-python-requirements": "^6.1.2",
@@ -30,5 +31,21 @@
       "serverless": "$serverless"
     }
   },
-  "packageManager": "yarn@4.10.2"
+  "resolutions": {
+    "@hapi/content": "6.0.1",
+    "dicer": "0.3.1",
+    "@smithy/config-resolver": "4.4.17",
+    "axios": "1.15.2",
+    "follow-redirects": "1.16.0",
+    "lodash": "4.18.1",
+    "@koa/router": "15.4.0",
+    "brace-expansion": "5.0.5",
+    "fast-xml-parser": "5.7.2",
+    "glob": "13.0.6",
+    "koa": "3.2.0",
+    "minimatch": "10.2.5",
+    "rimraf": "6.1.3",
+    "uuid": "14.0.0"
+  },
+  "packageManager": "yarn@4.14.1"
 }
