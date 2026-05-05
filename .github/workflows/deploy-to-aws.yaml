@@ -39,7 +39,7 @@ jobs:
     needs: 
       - verify-aws-account
       - call-test-workflow
-    uses: GNS-Science/nshm-github-actions/.github/workflows/deploy-to-aws-uv.yml@main
+    uses: GNS-Science/nshm-github-actions/.github/workflows/deploy-to-aws-uv.yml@fix/47-deployment
     with:
       python-version: '3.12'
       node-version: '22'
