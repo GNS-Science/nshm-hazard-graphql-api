@@ -5,6 +5,8 @@
 ### Changed
 - migrated to uv and ruff
 - dependency upgrades
+- deps (uv): major: cryptography 47→50, filelock 3.29→3.32, multidict 6→7, mypy 1→2, pillow 12→13, pyarrow 24→26, smart-open 7→9, toshi-hazard-store 1.5→2.0; minor+patch: in-range lock refresh
+- deps (yarn): transitive security resolutions bumped (glob, minimatch, fast-xml-parser, brace-expansion, @hapi/*, velocityjs, shell-quote, ws, undici, @smithy/smithy-client)
 
 ## [0.4.0] - 2026-03-02
 
