@@ -48,7 +48,7 @@
     "uuid": "14.0.0",
     "@hapi/wreck": "18.1.2",
     "velocityjs": "2.1.7",
-    "shell-quote": "1.9.0",
+    "shell-quote": "1.11.0",
     "ws": "8.21.0",
     "fast-xml-builder": "1.1.7",
     "@smithy/smithy-client": "4.6.4",
