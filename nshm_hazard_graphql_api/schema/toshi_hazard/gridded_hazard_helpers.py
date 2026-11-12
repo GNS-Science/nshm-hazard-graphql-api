@@ -133,11 +133,15 @@ def clip_tiles(clipping_parts: tuple[CustomPolygon], tiles: tuple[CustomPolygon]
 
     log.info(
         'filtered %s tiles to %s inner in %s',
-        len(tiles), len(covered_tiles), datetime.datetime.now(datetime.UTC) - t0,
+        len(tiles),
+        len(covered_tiles),
+        datetime.datetime.now(datetime.UTC) - t0,
     )
     log.info(
         'clipped %s edge tiles to %s in %s',
-        len(outer_tiles), len(clipped_tiles), datetime.datetime.now(datetime.UTC) - t0,
+        len(outer_tiles),
+        len(clipped_tiles),
+        datetime.datetime.now(datetime.UTC) - t0,
     )
 
     new_geometry = covered_tiles.union(clipped_tiles)

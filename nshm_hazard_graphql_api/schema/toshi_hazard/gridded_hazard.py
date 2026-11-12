@@ -142,9 +142,13 @@ def cacheable_hazard_map(
 ):
     t0 = datetime.datetime.now(datetime.UTC)
     log.info(
-        "cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, "
-        "agg: %s, hazard_model: %s, grid_id: %s",
-        vs30, imt, poe, agg, hazard_model, grid_id
+        "cacheable_hazard_map() vs30: %s, imt: %s, poe: %s, agg: %s, hazard_model: %s, grid_id: %s",
+        vs30,
+        imt,
+        poe,
+        agg,
+        hazard_model,
+        grid_id,
     )
 
     nz_parts = nz_simplified_polygons()  # cached
@@ -287,7 +291,12 @@ def cacheable_gridded_hazard_query(
 ):
     log.info(
         "cacheable_gridded_hazard_query with %s %s %s %s %s %s",
-        hazard_model_id, location_grid_id, vs30, imt, agg, poe,
+        hazard_model_id,
+        location_grid_id,
+        vs30,
+        imt,
+        agg,
+        poe,
     )
     try:
         res = list(
