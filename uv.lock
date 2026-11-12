@@ -1942,7 +1942,7 @@ wheels = [
 
 [[package]]
 name = "toshi-hazard-store"
-version = "1.5.0"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "geopandas" },
@@ -1960,9 +1960,9 @@ dependencies = [
     { name = "s3path" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a5/12/ffbe0e3aa77ece5079291e9b677bee2917180fa40dde4ae98f84b541d8b1/toshi_hazard_store-1.5.0.tar.gz", hash = "sha256:7ea4cc2fb92c702b122dadebd71e02b9fc848e89cb77c1a298bdce5722a67243", size = 43162653, upload-time = "2026-04-13T22:17:15.388Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/23/ff/d2f00480ac2e15762dfadc53e0ac7e664b3e3a0813f40d5424ad94d3409b/toshi_hazard_store-2.0.0.tar.gz", hash = "sha256:2bda4547331583e2fcf40b6a6590ab587ecef8233b3dbee845cfbc1b054fa2ac", size = 46381666, upload-time = "2026-05-06T01:08:04.469Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/51/fafd1aa482dbb89aefda99f92f15758a5c524c9067e19eb836fd8e1ffc62/toshi_hazard_store-1.5.0-py3-none-any.whl", hash = "sha256:9904e4fcdc469cbf01a26634e5a7fadb00c886a37bdb40a9af33418d84384a36", size = 119599, upload-time = "2026-04-13T22:17:13.172Z" },
+    { url = "https://files.pythonhosted.org/packages/0f/76/922025c1394282b6e39b1a7ea6de907f9ac3b98958dc76c29bfebbee2983/toshi_hazard_store-2.0.0-py3-none-any.whl", hash = "sha256:39b69efd0e2badb435b829568d4406fb7f2b6e67fca0f95632463e0e912c9032", size = 127695, upload-time = "2026-05-06T01:08:01.516Z" },
 ]
 
 [[package]]
