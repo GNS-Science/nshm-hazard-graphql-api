@@ -9,6 +9,9 @@
 - deps (yarn): transitive security resolutions bumped (glob, minimatch, fast-xml-parser, brace-expansion, @hapi/*, velocityjs, shell-quote, ws, undici, @smithy/smithy-client)
 - deps (uv): removed safety (dev); filelock 3→4 (security)
 - deps (yarn): shell-quote 1.9→1.11 (security)
+- Node 24 for serverless tooling and deploy workflow (was 22)
+- graphql-server 3.0.0b7→3.0.0 (`GraphQLView` now from `graphql_server.flask.views`); GraphQL validation/syntax errors now return HTTP 200 with `data: null` (was 400), form-encoded POSTs are no longer accepted (use JSON)
+- deps (uv): nzshm-common 0.10→0.11, nzshm-model 0.15→0.16
 
 ## [0.4.0] - 2026-03-02
 
