@@ -5,7 +5,7 @@ This application uses serverless.com.
 ## Environment setup
 
 - Clone the repo
-- Check/install a recent node version >=22:
+- Check/install a recent node version >=24:
   `nvm use 22`
 
 - Setup python env:

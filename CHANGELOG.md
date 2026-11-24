@@ -9,6 +9,8 @@
 - deps (yarn): transitive security resolutions bumped (glob, minimatch, fast-xml-parser, brace-expansion, @hapi/*, velocityjs, shell-quote, ws, undici, @smithy/smithy-client)
 - deps (uv): removed safety (dev); filelock 3→4 (security)
 - deps (yarn): shell-quote 1.9→1.11 (security)
+- node: deploy workflow uses Node 24 (was 22)
+- deps: require nzshm-common >=0.11 and nzshm-model >=0.16
 
 ## [0.4.0] - 2026-03-02
 
