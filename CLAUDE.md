@@ -7,7 +7,7 @@ This file provides project-specific context for AI assistants working on this co
 - **Name**: nshm-hazard-graphql-api
 - **Type**: GraphQL API (Flask + Graphene, deployed via Serverless Framework on AWS Lambda)
 - **Python**: Requires Python >=3.12, <3.13
-- **Node**: Requires Node >=22 (for Serverless Framework tooling)
+- **Node**: Requires Node >=24 (for Serverless Framework tooling)
 - **Package Manager**: Yarn Berry (v4) with `node-modules` linker
 
 ## Development Commands
