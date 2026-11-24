@@ -7,7 +7,7 @@ import os
 import yaml
 from flask import Flask
 from flask_cors import CORS
-from graphql_server.flask import GraphQLView
+from graphql_server.flask.views import GraphQLView
 
 from nshm_hazard_graphql_api.library_version_check import log_library_info
 from nshm_hazard_graphql_api.schema import schema_root
@@ -32,8 +32,8 @@ def create_app():
         '/graphql',
         view_func=GraphQLView.as_view(
             'graphql',
-            schema=schema_root,
-            graphiql=True,
+            schema=schema_root.graphql_schema,
+            graphql_ide='graphiql',
         ),
     )
 

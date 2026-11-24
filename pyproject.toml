@@ -21,7 +21,7 @@ dependencies = [
     "flask-cors>=6.0",
     "geopandas>=1.0.1",
     "graphene>=3.3",
-    "graphql-server==3.0.0b7",
+    "graphql-server==3.0.0",
     "matplotlib>=3.10.3",
     "nzshm-common>=0.8.4",
     "nzshm-model>=0.13.6",
