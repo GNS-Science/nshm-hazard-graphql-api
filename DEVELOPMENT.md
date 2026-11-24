@@ -5,8 +5,8 @@ This application uses serverless.com.
 ## Environment setup
 
 - Clone the repo
-- Check/install a recent node version >=22:
-  `nvm use 22`
+- Check/install a recent node version >=24:
+  `nvm use 24`
 
 - Setup python env:
 
@@ -28,7 +28,7 @@ Now `yarn sls info` should print something like:
 
 ```
 Running "serverless" from node_modules
-Environment: linux, node 22.x.x, framework 4.x.x (local) ...
+Environment: linux, node 24.x.x, framework 4.x.x (local) ...
 ```
 
 You'll probably see an error if your AWS credentials are not those required for SLS.
